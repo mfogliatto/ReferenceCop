@@ -14,11 +14,13 @@ namespace ReferenceCop
     {
         private readonly string configFilePath;
         private readonly HashSet<string> illegalAssemblyNames;
+        private readonly IEqualityComparer<string> referenceNameComparer;
 
         public ConfigurableILlegalReferenceDetector(string configFilePath)
         {
             this.configFilePath = configFilePath;
             this.illegalAssemblyNames = new HashSet<string>();
+            this.referenceNameComparer = new PatternMatchComparer();
         }
 
         public void Initialize(CompilationAnalysisContext compilationAnalysisContext)
@@ -38,7 +40,7 @@ namespace ReferenceCop
         {
             foreach (var reference in references)
             {
-                if (this.illegalAssemblyNames.Contains(reference.Name))
+                if (this.illegalAssemblyNames.Contains(reference.Name, this.referenceNameComparer))
                 {
                     // Report a diagnostic for the illegal reference
                     yield return DiagnosticFactory.CreateIllegalReferenceDiagnosticFor(reference.Name);
