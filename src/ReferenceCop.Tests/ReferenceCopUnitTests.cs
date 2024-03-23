@@ -4,7 +4,7 @@ using VerifyCS = ReferenceCop.Test.CSharpCodeFixVerifier<
     ReferenceCop.ReferenceCopAnalyzer,
     ReferenceCop.ReferenceCopCodeFixProvider>;
 
-namespace ReferenceCop.Test
+namespace ReferenceCop.Tests
 {
     [TestClass]
     public class ReferenceCopUnitTest

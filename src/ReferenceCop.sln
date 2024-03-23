@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.CodeFixes", "R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Package", "ReferenceCop.Package\ReferenceCop.Package.csproj", "{A0EAF318-32D4-4545-B0F2-A65F5A10DECA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Test", "ReferenceCop.Test\ReferenceCop.Test.csproj", "{272C305F-3638-4F57-AAE5-3C79E4FDB96E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Tests", "ReferenceCop.Tests\ReferenceCop.Tests.csproj", "{272C305F-3638-4F57-AAE5-3C79E4FDB96E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Vsix", "ReferenceCop.Vsix\ReferenceCop.Vsix.csproj", "{AB6766DE-DA3F-4394-A747-FC4978B010F8}"
 EndProject
