@@ -6,7 +6,7 @@
     internal class PatternMatchComparer : IEqualityComparer<string>
     {
         private const string DefaultPattern = "*";
-        private const char PrefixDelimiter = '*';
+        private const char Wildcard = '*';
 
         public bool Equals(string x, string y)
         {
@@ -15,21 +15,40 @@
                 return true;
             }
 
-            return PrefixEquals(x, y) || PrefixEquals(y, x);
+            return AreEquals(x, y) || AreEquals(y, x);
         }
 
-        private static bool PrefixEquals(string first, string second)
+        private static bool AreEquals(string first, string second)
         {
-            var prefixIndex = first.IndexOf(PrefixDelimiter);
-            if (prefixIndex == -1)
+            var wildcardIndex = first.IndexOf(Wildcard);
+            if (wildcardIndex == -1)
             {
                 return first.Equals(second, StringComparison.InvariantCulture);
             }
+            else if (wildcardIndex == 0)
+            {
+                return SuffixEquals(first, second);
+            }
+            else if (wildcardIndex > 0)
+            {
+                return PrefixEquals(first, second, wildcardIndex);
+            }
             else
             {
-                var prefix = first.Substring(0, prefixIndex);
-                return second.StartsWith(prefix, StringComparison.InvariantCulture);
+                return false;
             }
+        }
+
+        private static bool PrefixEquals(string first, string second, int wildcardIndex)
+        {
+            var prefix = first.Substring(0, wildcardIndex);
+            return second.StartsWith(prefix, StringComparison.InvariantCulture);
+        }
+
+        private static bool SuffixEquals(string first, string second)
+        {
+            var suffix = first.Substring(1, first.Length - 1);
+            return second.EndsWith(suffix, StringComparison.InvariantCulture);
         }
 
         public int GetHashCode(string obj)

@@ -68,11 +68,27 @@
         }
 
         [TestMethod]
+        [DataRow("*.Abstractions", "Reference.Abstractions")]
+        [DataRow("*Abstractions", "ReferenceAbstractions")]
+        public void Equals_WhenXContainsASuffixOfY_ReturnsTrue(string x, string y)
+        {
+            // Arrange.
+            var comparer = new PatternMatchComparer();
+
+            // Act.
+            bool result = comparer.Equals(x, y);
+
+            // Assert.
+            result.Should().BeTrue();
+        }
+
+        [TestMethod]
         [DataRow("ReferenceA", "ReferenceB")]
         [DataRow("Reference.Level1.*", "Reference.Level2")]
         [DataRow("Reference.Level1.Level2.*", "Reference.Level1")]
         [DataRow("ReferenceA*", "Reference")]
-        public void Equals_WhenXDoesNotContainAPrefixOfY_ReturnsFalse(string x, string y)
+        [DataRow("*ReferenceA", "Reference")]
+        public void Equals_WhenXNotEqualsY_ReturnsFalse(string x, string y)
         {
             // Arrange.
             var comparer = new PatternMatchComparer();
@@ -101,11 +117,27 @@
         }
 
         [TestMethod]
+        [DataRow("*.Abstractions", "Reference.Abstractions")]
+        [DataRow("*Abstractions", "ReferenceAbstractions")]
+        public void Equals_WhenYContainsASuffixOfX_ReturnsTrue(string x, string y)
+        {
+            // Arrange.
+            var comparer = new PatternMatchComparer();
+
+            // Act.
+            bool result = comparer.Equals(y, x);
+
+            // Assert.
+            result.Should().BeTrue();
+        }
+
+        [TestMethod]
         [DataRow("ReferenceA", "ReferenceB")]
         [DataRow("Reference.Level1.*", "Reference.Level2")]
         [DataRow("Reference.Level1.Level2.*", "Reference.Level1")]
         [DataRow("ReferenceA*", "Reference")]
-        public void Equals_WhenYDoesNotContainAPrefixOfX_ReturnsFalse(string x, string y)
+        [DataRow("*ReferenceA", "Reference")]
+        public void Equals_WhenYNotEqualsX_ReturnsFalse(string x, string y)
         {
             // Arrange.
             var comparer = new PatternMatchComparer();
