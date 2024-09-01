@@ -10,7 +10,7 @@
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptors.IllegalReferenceRule);
 
-        private const string ReferenceCopConfigPath = "ReferenceCop.config";
+        private const string ReferenceCopConfigPath = "ReferenceCop.config.json";
         private readonly IIllegalReferenceDetector detector;
 
         public ReferenceCopAnalyzer()
