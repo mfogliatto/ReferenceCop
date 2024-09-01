@@ -13,5 +13,13 @@
             Category,
             DiagnosticSeverity.Error,
             isEnabledByDefault: true);
+
+        public static readonly DiagnosticDescriptor DiscouragedReferenceRule = new DiagnosticDescriptor(
+            "RC0002",
+            "Discouraged references",
+            "Consider removing reference '{0}' as its usage is discouraged",
+            Category,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
     }
 }
