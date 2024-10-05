@@ -4,9 +4,17 @@ namespace ReferenceCop
 {
     internal static class DiagnosticFactory
     {
-        public static Diagnostic CreateIllegalReferenceDiagnosticFor(string referenceName)
+        public static Diagnostic CreateDiagnosticFor(ReferenceCopConfig.Rule rule)
         {
-            return Diagnostic.Create(DiagnosticDescriptors.IllegalReferenceRule, Location.None, referenceName);
+            switch (rule.Severity)
+            {
+                case DiagnosticSeverity.Error:
+                    return Diagnostic.Create(DiagnosticDescriptors.IllegalReferenceRule, Location.None, rule.Name);
+                case DiagnosticSeverity.Warning:
+                    return Diagnostic.Create(DiagnosticDescriptors.DiscouragedReferenceRule, Location.None, rule.Name);
+                default:
+                    return null;
+            }
         }
     }
 }
