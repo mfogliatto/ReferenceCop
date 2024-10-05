@@ -1,20 +1,16 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ReferenceCop
+﻿namespace ReferenceCop
 {
-    internal class StaticIllegalReferenceDetector : IIllegalReferenceDetector
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    internal class StaticIllegalReferenceDetector : IViolationDetector
     {
         private readonly string[] illegalReferences = new[] { "Newtonsoft.Json", "LibraryB" };
         
-        public void Initialize(CompilationAnalysisContext compilationAnalysisContext)
-        {
-        }
-        
-        public IEnumerable<Diagnostic> GetIllegalReferencesFrom(IEnumerable<AssemblyIdentity> references)
+        public IEnumerable<Diagnostic> GetViolationsFrom(IEnumerable<AssemblyIdentity> references)
         {
             foreach (var reference in references)
             {
