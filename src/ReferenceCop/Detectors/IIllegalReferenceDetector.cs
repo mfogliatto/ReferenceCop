@@ -6,7 +6,6 @@
 
     internal interface IIllegalReferenceDetector
     {
-        void Initialize(CompilationAnalysisContext compilationAnalysisContext);
         IEnumerable<Diagnostic> GetIllegalReferencesFrom(IEnumerable<AssemblyIdentity> references);
     }
 }

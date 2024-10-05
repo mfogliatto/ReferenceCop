@@ -2,6 +2,7 @@
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using ReferenceCop.Configuration;
     using System.Collections.Immutable;
     using System.Diagnostics;
         
@@ -10,13 +11,7 @@
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptors.IllegalReferenceRule);
 
-        private const string ReferenceCopConfigPath = "ReferenceCop.config.json";
-        private readonly IIllegalReferenceDetector detector;
-
-        public ReferenceCopAnalyzer()
-        {
-            this.detector = new ConfigurableILlegalReferenceDetector(ReferenceCopConfigPath);
-        }
+        private IIllegalReferenceDetector detector;
 
         public override void Initialize(AnalysisContext context)
         {
@@ -27,8 +22,11 @@
 
             context.RegisterCompilationAction(compilationAnalysisContext =>
             {
-                this.detector.Initialize(compilationAnalysisContext);
-                AnalyzeCompilation(compilationAnalysisContext);
+                var configLoader = new XmlConfigurationLoader(compilationAnalysisContext);
+                var config = configLoader.Load();
+                
+                this.detector = new ConfigurableILlegalReferenceDetector(new PatternMatchComparer(), config);
+                this.AnalyzeCompilation(compilationAnalysisContext);
             });
         }
 

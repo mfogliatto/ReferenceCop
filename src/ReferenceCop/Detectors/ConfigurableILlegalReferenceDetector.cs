@@ -1,67 +1,55 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
-using System.Threading;
-
-namespace ReferenceCop
+﻿namespace ReferenceCop
 {
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Xml;
+    using System.Xml.Serialization;
+
     internal class ConfigurableILlegalReferenceDetector : IIllegalReferenceDetector
     {
-        private readonly string configFilePath;
-        private readonly HashSet<string> illegalAssemblyNames;
+        private readonly Dictionary<string, ReferenceCopConfig.Rule> rules;
         private readonly IEqualityComparer<string> referenceNameComparer;
 
-        public ConfigurableILlegalReferenceDetector(string configFilePath)
+        private ReferenceCopConfig config;
+
+        public ConfigurableILlegalReferenceDetector(IEqualityComparer<string> referenceNameComparer, ReferenceCopConfig config)
         {
-            this.configFilePath = configFilePath;
-            this.illegalAssemblyNames = new HashSet<string>();
-            this.referenceNameComparer = new PatternMatchComparer();
-        }
-
-        public void Initialize(CompilationAnalysisContext compilationAnalysisContext)
-        {
-            ImmutableArray<AdditionalText> additionalFiles = compilationAnalysisContext.Options.AdditionalFiles;
-            AdditionalText illegalReferencesFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals(this.configFilePath));
-
-            if (illegalReferencesFile == null)
-            {
-                throw new InvalidOperationException("Configuration file containing illegal references was not found.");
-            }
-
-            this.LoadIllegalAssemblyNames(illegalReferencesFile, compilationAnalysisContext.CancellationToken);
+            this.rules = new Dictionary<string, ReferenceCopConfig.Rule>();
+            this.LoadRulesFrom(config);
+            this.referenceNameComparer = referenceNameComparer;
         }
 
         public IEnumerable<Diagnostic> GetIllegalReferencesFrom(IEnumerable<AssemblyIdentity> references)
         {
             foreach (var reference in references)
             {
-                if (this.illegalAssemblyNames.Contains(reference.Name, this.referenceNameComparer))
+                if (this.rules.ContainsKey(reference.Name))
                 {
-                    // Report a diagnostic for the illegal reference
-                    yield return DiagnosticFactory.CreateIllegalReferenceDiagnosticFor(reference.Name);
+                    yield return DiagnosticFactory.CreateDiagnosticFor(this.rules[reference.Name]);
                 }
             }
         }
 
-        private void LoadIllegalAssemblyNames(AdditionalText illegalReferencesFile, CancellationToken cancellationToken)
+        private void LoadRulesFrom(ReferenceCopConfig config)
         {
-            try
+            foreach (var rule in config.Rules)
             {
-                SourceText sourceText = illegalReferencesFile.GetText(cancellationToken);
-                foreach (TextLine line in sourceText.Lines)
+                try
                 {
-                    this.illegalAssemblyNames.Add(line.ToString());
+                    this.rules.Add(rule.Pattern, rule);
                 }
-
-            }
-            catch (Exception)
-            {
-                throw;
+                catch (ArgumentException)
+                {
+                    throw new InvalidOperationException($"Duplicate rule pattern '{rule.Pattern}' found in the configuration file.");
+                }
             }
         }
     }

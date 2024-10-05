@@ -1,5 +1,6 @@
 ﻿namespace ReferenceCop.Tests
 {
+    using FluentAssertions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     
     [TestClass]
@@ -17,7 +18,7 @@
             bool result = comparer.Equals(x, y);
 
             // Assert.
-            Assert.IsTrue(result);
+            result.Should().BeTrue();
         }
 
         [TestMethod]
@@ -32,7 +33,7 @@
             bool result = comparer.Equals(x, y);
 
             // Assert.
-            Assert.IsFalse(result);
+            result.Should().BeFalse();
         }
 
         [TestMethod]
@@ -46,7 +47,7 @@
             int result = comparer.GetHashCode(obj);
 
             // Assert.
-            Assert.AreEqual(obj.GetHashCode(), result);
+            result.Should().Be(obj.GetHashCode());
         }
     }
 }
