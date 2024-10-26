@@ -27,7 +27,7 @@
                 {
                     if (this.referenceNameComparer.Equals(rule.Key, reference.Name))
                     {
-                        yield return DiagnosticFactory.CreateDiagnosticFor(this.rules[reference.Name]);
+                        yield return DiagnosticFactory.CreateDiagnosticFor(rule.Value, reference.Name);
                     }
                 }
             }
