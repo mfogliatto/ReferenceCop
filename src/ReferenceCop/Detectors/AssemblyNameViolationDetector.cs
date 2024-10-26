@@ -21,11 +21,14 @@
 
         public IEnumerable<Diagnostic> GetViolationsFrom(IEnumerable<AssemblyIdentity> references)
         {
-            foreach (var reference in references)
+            foreach (var rule in this.rules)
             {
-                if (this.rules.ContainsKey(reference.Name))
+                foreach (var reference in references)
                 {
-                    yield return DiagnosticFactory.CreateDiagnosticFor(this.rules[reference.Name]);
+                    if (this.referenceNameComparer.Equals(rule.Key, reference.Name))
+                    {
+                        yield return DiagnosticFactory.CreateDiagnosticFor(this.rules[reference.Name]);
+                    }
                 }
             }
         }
