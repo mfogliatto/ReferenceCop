@@ -1,7 +1,5 @@
 ﻿namespace ReferenceCop.Tests
 {
-    using Microsoft.CodeAnalysis;
-
     internal class ReferenceCopConfigBuilder
     {
         private readonly ReferenceCopConfig instance;
@@ -17,7 +15,7 @@
             {
                 Name = "DoNotUse-" + pattern,
                 Description = $"Use of {pattern} is forbidden. Please use Y instead",
-                Severity = DiagnosticSeverity.Error,
+                Severity = ReferenceCopConfig.Rule.ViolationSeverity.Error,
                 Pattern = pattern
             });
 

@@ -1,6 +1,5 @@
 ﻿namespace ReferenceCop
 {
-    using Microsoft.CodeAnalysis;
     using System;
     using System.Collections.Generic;
     using System.Xml.Serialization;
@@ -26,7 +25,14 @@
             [XmlElement]
             public string Description { get; set; }
             [XmlElement]
-            public DiagnosticSeverity Severity { get; set; }
+            public ViolationSeverity Severity { get; set; }
+
+            public enum ViolationSeverity
+            {
+                None,
+                Error,
+                Warning
+            }
         }
 
         [Serializable]
