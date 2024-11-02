@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class AssemblyNameViolationDetector : IViolationDetector
+    internal class AssemblyNameViolationDetector : IViolationDetector<AssemblyIdentity>
     {
         private readonly Dictionary<string, ReferenceCopConfig.Rule> rules;
         private readonly IEqualityComparer<string> referenceNameComparer;

@@ -10,7 +10,7 @@
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptors.IllegalReferenceRule);
 
-        private IViolationDetector detector;
+        private IViolationDetector<AssemblyIdentity> detector;
 
         public override void Initialize(AnalysisContext context)
         {

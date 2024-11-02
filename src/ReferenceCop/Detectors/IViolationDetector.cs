@@ -3,8 +3,8 @@
     using Microsoft.CodeAnalysis;
     using System.Collections.Generic;
 
-    internal interface IViolationDetector
+    internal interface IViolationDetector<TAssemblyIdentity>
     {
-        IEnumerable<Diagnostic> GetViolationsFrom(IEnumerable<AssemblyIdentity> references);
+        IEnumerable<Diagnostic> GetViolationsFrom(IEnumerable<TAssemblyIdentity> references);
     }
 }
