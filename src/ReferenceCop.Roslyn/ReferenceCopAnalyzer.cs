@@ -31,9 +31,9 @@
         private void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             var compilation = context.Compilation;
-            foreach (var illegalReference in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
+            foreach (var violation in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
             {
-                context.ReportDiagnostic(illegalReference);
+                context.ReportDiagnostic(DiagnosticFactory.CreateDiagnosticFor(violation));
             }
         }
     }

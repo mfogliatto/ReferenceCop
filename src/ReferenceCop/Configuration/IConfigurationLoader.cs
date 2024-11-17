@@ -1,6 +1,6 @@
 ﻿namespace ReferenceCop
 {
-    internal interface IConfigurationLoader
+    public interface IConfigurationLoader
     {
         ReferenceCopConfig Load();
     }

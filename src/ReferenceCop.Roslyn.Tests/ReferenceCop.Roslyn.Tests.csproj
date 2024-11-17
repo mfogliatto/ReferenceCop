@@ -23,7 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReferenceCop.Roslyn\ReferenceCop.Roslyn.csproj" />
+    <ProjectReference Include="..\ReferenceCop.Roslyn.CodeFixes\ReferenceCop.Roslyn.CodeFixes.csproj" />
+    <ProjectReference Include="..\ReferenceCop\ReferenceCop.csproj" />
   </ItemGroup>
 
 </Project>

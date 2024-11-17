@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -27,8 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReferenceCop.CodeFixes\ReferenceCop.CodeFixes.csproj" />
-    <ProjectReference Include="..\ReferenceCop\ReferenceCop.csproj" />
+    <ProjectReference Include="..\ReferenceCop.Roslyn\ReferenceCop.Roslyn.csproj" />
+    <ProjectReference Include="..\ReferenceCop.Roslyn.CodeFixes\ReferenceCop.Roslyn.CodeFixes.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +38,8 @@
   <Target Name="_AddAnalyzersToOutput">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.dll" PackagePath="analyzers/dotnet/cs" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.Roslyn.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.Roslyn.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>
   </Target>
 

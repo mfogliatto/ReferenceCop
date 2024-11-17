@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    internal class PatternMatchComparer : IEqualityComparer<string>
+    public class PatternMatchComparer : IEqualityComparer<string>
     {
         private const string DefaultPattern = "*";
         private const char Wildcard = '*';

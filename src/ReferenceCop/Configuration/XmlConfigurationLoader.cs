@@ -11,7 +11,7 @@
     using System.Xml;
     using System.Xml.Serialization;
 
-    internal class XmlConfigurationLoader : IConfigurationLoader
+    public class XmlConfigurationLoader : IConfigurationLoader
     {
         private const string ReferenceCopConfigPath = "ReferenceCop.config";
 

@@ -5,11 +5,11 @@ VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop", "ReferenceCop\ReferenceCop.csproj", "{2201B4F1-5882-44C6-944B-E661A504BA8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.CodeFixes", "ReferenceCop.CodeFixes\ReferenceCop.CodeFixes.csproj", "{5068AD04-AD6C-4F6F-BF73-4EB6E3941D05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Roslyn.CodeFixes", "ReferenceCop.Roslyn.CodeFixes\ReferenceCop.Roslyn.CodeFixes.csproj", "{5068AD04-AD6C-4F6F-BF73-4EB6E3941D05}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Package", "ReferenceCop.Package\ReferenceCop.Package.csproj", "{A0EAF318-32D4-4545-B0F2-A65F5A10DECA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Tests", "ReferenceCop.Tests\ReferenceCop.Tests.csproj", "{272C305F-3638-4F57-AAE5-3C79E4FDB96E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Roslyn.Tests", "ReferenceCop.Roslyn.Tests\ReferenceCop.Roslyn.Tests.csproj", "{272C305F-3638-4F57-AAE5-3C79E4FDB96E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Vsix", "ReferenceCop.Vsix\ReferenceCop.Vsix.csproj", "{AB6766DE-DA3F-4394-A747-FC4978B010F8}"
 EndProject
@@ -18,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		..\README.md = ..\README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Roslyn", "ReferenceCop.Roslyn\ReferenceCop.Roslyn.csproj", "{1DB93B03-1F4A-457F-92DC-03B535849112}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Tests", "ReferenceCop.Tests\ReferenceCop.Tests.csproj", "{303D7A36-0E10-4DB9-BF0B-9D919698B012}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{AB6766DE-DA3F-4394-A747-FC4978B010F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB6766DE-DA3F-4394-A747-FC4978B010F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB6766DE-DA3F-4394-A747-FC4978B010F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DB93B03-1F4A-457F-92DC-03B535849112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DB93B03-1F4A-457F-92DC-03B535849112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DB93B03-1F4A-457F-92DC-03B535849112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DB93B03-1F4A-457F-92DC-03B535849112}.Release|Any CPU.Build.0 = Release|Any CPU
+		{303D7A36-0E10-4DB9-BF0B-9D919698B012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{303D7A36-0E10-4DB9-BF0B-9D919698B012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{303D7A36-0E10-4DB9-BF0B-9D919698B012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{303D7A36-0E10-4DB9-BF0B-9D919698B012}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class AssemblyNameViolationDetector : IViolationDetector<AssemblyIdentity>
+    public class AssemblyNameViolationDetector : IViolationDetector<AssemblyIdentity>
     {
         private readonly Dictionary<string, ReferenceCopConfig.Rule> rules;
         private readonly IEqualityComparer<string> referenceNameComparer;
@@ -19,7 +19,7 @@
             this.referenceNameComparer = referenceNameComparer;
         }
 
-        public IEnumerable<Diagnostic> GetViolationsFrom(IEnumerable<AssemblyIdentity> references)
+        public IEnumerable<Violation> GetViolationsFrom(IEnumerable<AssemblyIdentity> references)
         {
             foreach (var rule in this.rules)
             {
@@ -27,7 +27,7 @@
                 {
                     if (this.referenceNameComparer.Equals(rule.Key, reference.Name))
                     {
-                        yield return DiagnosticFactory.CreateDiagnosticFor(rule.Value, reference.Name);
+                        yield return new Violation(rule.Value, reference.Name);
                     }
                 }
             }
