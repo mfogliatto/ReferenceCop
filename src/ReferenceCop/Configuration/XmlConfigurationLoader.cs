@@ -1,65 +1,53 @@
 ﻿namespace ReferenceCop
 {
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using System;
-    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Threading;
     using System.Xml;
     using System.Xml.Serialization;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     public class XmlConfigurationLoader : IConfigurationLoader
     {
         private const string ReferenceCopConfigPath = "ReferenceCop.config";
 
-        private readonly string configAsString;
+        private readonly ReferenceCopConfig loadedConfig;
 
         public XmlConfigurationLoader(CompilationAnalysisContext compilationAnalysisContext) 
         {
-            this.configAsString = GetConfigAsStringFrom(
-                ReferenceCopConfigPath, compilationAnalysisContext.Options.AdditionalFiles, compilationAnalysisContext.CancellationToken);
+            var configFilePath = compilationAnalysisContext.Options.AdditionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals(ReferenceCopConfigPath)).Path;
+            using (var stream = new FileStream(configFilePath, FileMode.Open))
+            {
+                this.loadedConfig = ParseConfigFrom(stream);
+            }
+        }
+
+        public XmlConfigurationLoader(string configFilePath)
+        {
+            using (var stream = new FileStream(configFilePath, FileMode.Open))
+            {
+                this.loadedConfig = ParseConfigFrom(stream);
+            }
         }
 
         internal XmlConfigurationLoader(XmlDocument xmlDocument)
         {
-            this.configAsString = GetConfigAsStringFrom(xmlDocument);
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xmlDocument.OuterXml)))
+            {
+                this.loadedConfig = ParseConfigFrom(stream);
+            }
         }
 
         public ReferenceCopConfig Load()
         {
-            var config = ParseConfigFrom(this.configAsString);
-
-            return config;
+            return this.loadedConfig;
         }
 
-        private static string GetConfigAsStringFrom(XmlDocument xmlDocument)
-        {
-            return xmlDocument.OuterXml;
-        }
-
-        private static string GetConfigAsStringFrom(string configFilePath, ImmutableArray<AdditionalText> additionalFiles, CancellationToken cancellationToken)
-        {
-            var illegalReferencesFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals(configFilePath));
-
-            if (illegalReferencesFile == null)
-            {
-                throw new InvalidOperationException("Configuration file containing illegal references was not found.");
-            }
-
-            var sourceText = illegalReferencesFile.GetText(cancellationToken);
-            return sourceText.ToString();
-        }
-
-        private static ReferenceCopConfig ParseConfigFrom(string configAsString)
+        private static ReferenceCopConfig ParseConfigFrom(Stream stream)
         {
             var xmlSerializer = new XmlSerializer(typeof(ReferenceCopConfig));
-            using (var reader = new MemoryStream(Encoding.UTF8.GetBytes(configAsString)))
-            {
-                return (ReferenceCopConfig)xmlSerializer.Deserialize(reader);
-            }
+
+            return (ReferenceCopConfig)xmlSerializer.Deserialize(stream);
         }
     }
 }

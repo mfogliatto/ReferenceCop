@@ -1,14 +1,10 @@
-﻿using FluentAssertions;
-using FluentAssertions.Execution;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
-
-namespace ReferenceCop.Tests
+﻿namespace ReferenceCop.Tests
 {
+    using FluentAssertions;
+    using FluentAssertions.Execution;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Xml;
+
     [TestClass]
     public class XmlConfigurationLoaderTests
     {
