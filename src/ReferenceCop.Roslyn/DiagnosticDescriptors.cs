@@ -7,17 +7,17 @@
         private const string Category = "ReferenceCop";
 
         public static readonly DiagnosticDescriptor IllegalReferenceRule = new DiagnosticDescriptor(
-            "RC0001",
+            Violation.ViolationSeverityErrorCode,
             "Illegal references",
-            "Illegal reference '{0}' must be removed, as its usage is forbidden by rule '{1}'",
+            ViolationMessageTemplates.IllegalReference,
             Category,
             DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
         public static readonly DiagnosticDescriptor DiscouragedReferenceRule = new DiagnosticDescriptor(
-            "RC0002",
+            Violation.ViolationSeverityWarningCode,
             "Discouraged references",
-            "Consider removing reference '{0}' as its usage is discouraged by rule '{1}'",
+            ViolationMessageTemplates.DiscouragedReference,
             Category,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);

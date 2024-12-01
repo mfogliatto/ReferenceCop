@@ -2,13 +2,16 @@
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics;
         
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ReferenceCopAnalyzer : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptors.IllegalReferenceRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+            DiagnosticDescriptors.IllegalReferenceRule,
+            DiagnosticDescriptors.DiscouragedReferenceRule);
 
         private IViolationDetector<AssemblyIdentity> detector;
 
@@ -33,7 +36,7 @@
             var compilation = context.Compilation;
             foreach (var violation in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
             {
-                context.ReportDiagnostic(DiagnosticFactory.CreateDiagnosticFor(violation));
+                context.ReportDiagnostic(DiagnosticFactory.CreateFor(violation));
             }
         }
     }
