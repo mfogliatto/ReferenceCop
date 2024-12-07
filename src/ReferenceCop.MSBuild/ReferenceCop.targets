@@ -1,0 +1,10 @@
+<Project>
+  <UsingTask TaskName="ReferenceCopTask" AssemblyFile="ReferenceCop.MSBuild.dll" />
+
+  <Target Name="RunReferenceCop" BeforeTargets="Build">
+    <ItemGroup>
+      <ProjectFile Include="$(MSBuildProjectFullPath)" />
+    </ItemGroup>
+    <ReferenceCopTask ProjectFile="@(ProjectFile)" ConfigFilePath="../ReferenceCop.config" />
+  </Target>
+</Project>

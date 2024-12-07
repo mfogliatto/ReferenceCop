@@ -9,6 +9,7 @@
     public class ReferenceCopConfig
     {
         [XmlArrayItem(typeof(AssemblyName))]
+        [XmlArrayItem(typeof(AssemblyTag))]
         public List<Rule> Rules { get; set; }
 
         public ReferenceCopConfig()
@@ -18,6 +19,7 @@
 
         [Serializable]
         [XmlInclude(typeof(AssemblyName))]
+        [XmlInclude(typeof(AssemblyTag))]
         public abstract class Rule
         {
             [XmlElement]
@@ -39,6 +41,13 @@
         public class AssemblyName : Rule
         {
             public string Pattern { get; set; }
+        }
+
+        [Serializable]
+        public class AssemblyTag : Rule
+        {
+            public string FromAssemblyTag { get; set; }
+            public string ToAssemblyTag { get; set; }
         }
     }
 }
