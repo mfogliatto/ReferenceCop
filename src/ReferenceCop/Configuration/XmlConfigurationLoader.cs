@@ -13,9 +13,15 @@
 
         private readonly ReferenceCopConfig loadedConfig;
 
-        public XmlConfigurationLoader(CompilationAnalysisContext compilationAnalysisContext) 
+        public XmlConfigurationLoader(CompilationAnalysisContext compilationAnalysisContext)
         {
-            var configFilePath = compilationAnalysisContext.Options.AdditionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals(ReferenceCopConfigPath)).Path;
+            var configFile = compilationAnalysisContext.Options.AdditionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals(ReferenceCopConfigPath));
+            if (configFile == null)
+            {
+                throw new ConfigurationFileNotFoundException();
+            }
+
+            var configFilePath = configFile.Path;
             using (var stream = new FileStream(configFilePath, FileMode.Open))
             {
                 this.loadedConfig = ParseConfigFrom(stream);

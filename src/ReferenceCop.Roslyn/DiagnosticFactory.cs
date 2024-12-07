@@ -1,5 +1,6 @@
 ﻿namespace ReferenceCop
 {
+    using System;
     using Microsoft.CodeAnalysis;
 
     internal static class DiagnosticFactory
@@ -25,6 +26,14 @@
                 default:
                     return null;
             }
+        }
+
+        public static Diagnostic CreateFor(Exception ex)
+        {
+            return Diagnostic.Create(
+                DiagnosticDescriptors.GeneralError,
+                Location.None,
+                ex.Message);
         }
     }
 }

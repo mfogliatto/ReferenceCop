@@ -1,5 +1,6 @@
 ﻿namespace ReferenceCop.MSBuild
 {
+    using System;
     using Microsoft.Build.Framework;
 
     internal static class BuildEngineExtensions
@@ -23,6 +24,27 @@
                         break;
                     }
             }
+        }
+
+        internal static void LogErrorEvent(this IBuildEngine self, Exception ex)
+        {
+            var errorEvent = CreateErrorEventFor(ex);
+            self.LogErrorEvent(errorEvent);
+        }
+
+        internal static BuildErrorEventArgs CreateErrorEventFor(Exception ex)
+        {
+            return new BuildErrorEventArgs(
+                        subcategory: SenderName,
+                        code: "RC0000",
+                        file: default,
+                        lineNumber: default,
+                        columnNumber: default,
+                        endLineNumber: default,
+                        endColumnNumber: default,
+                        $"An error occurred while executing the MSBuild task: {ex.Message}",
+                        helpKeyword: default,
+                        senderName: SenderName);
         }
 
         internal static BuildErrorEventArgs CreateErrorEventFor(Violation violation, string file)

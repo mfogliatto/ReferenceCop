@@ -1,5 +1,6 @@
 ﻿namespace ReferenceCop.MSBuild
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -31,15 +32,23 @@
                 Debugger.Launch();
             }
 
-            var configLoader = new XmlConfigurationLoader(ConfigFilePath);
-            var config = configLoader.Load();
-            this.detector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec);
+            bool success = true;
+            try
+            {
+                var configLoader = new XmlConfigurationLoader(ConfigFilePath);
+                var config = configLoader.Load();
+                this.detector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec);
 
-            var success = true;
-            foreach (var violation in this.detector.GetViolationsFrom(GetProjectReferences()))
+                foreach (var violation in this.detector.GetViolationsFrom(GetProjectReferences()))
+                {
+                    success = false;
+                    BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
+                }
+            }
+            catch (Exception ex)
             {
                 success = false;
-                BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
+                BuildEngine.LogErrorEvent(ex);
             }
 
             return success;
