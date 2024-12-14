@@ -37,7 +37,7 @@
             {
                 var configLoader = new XmlConfigurationLoader(ConfigFilePath);
                 var config = configLoader.Load();
-                this.detector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec);
+                this.detector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec, new AssemblyTagProvider());
 
                 foreach (var violation in this.detector.GetViolationsFrom(GetProjectReferences()))
                 {
