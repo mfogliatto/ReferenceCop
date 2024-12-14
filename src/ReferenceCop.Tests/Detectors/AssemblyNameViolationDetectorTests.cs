@@ -4,13 +4,15 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using NSubstitute;
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     [TestClass]
     public class AssemblyNameViolationDetectorTests
     {
         [TestMethod]
-        public void GetViolationsFrom_WhenViolationIsFoundWithExactMatch_ReturnsDiagnosticEntry()
+        public void GetViolationsFrom_WhenMatchingRule_ReturnsViolation()
         {
             // Arrange.
             const string detectableValue = "System.Xml";
@@ -35,7 +37,7 @@
         }
 
         [TestMethod]
-        public void GetViolationsFrom_WhenViolationIsFoundWithPatternMatch_ReturnsDiagnosticEntry()
+        public void GetViolationsFrom_WhenMatchingRuleUsesPatternMatch_ReturnsViolations()
         {
             // Arrange.
             const string partialMatch = "System.Xml";
@@ -45,9 +47,6 @@
             var config = new ReferenceCopConfigBuilder()
                 .WithAssemblyNameRule(detectablePattern)
                 .Build();
-            var comparer = Substitute.For<IEqualityComparer<string>>();
-            comparer.Equals(detectablePattern, detectableValue1).Returns(true);
-            comparer.Equals(detectablePattern, detectableValue2).Returns(true);
             var detector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
             var references = new[]
             {
@@ -64,7 +63,7 @@
         }
 
         [TestMethod]
-        public void GetViolationsFrom_WhenNoViolationsAreFound_ReturnsEmptyEnumerable()
+        public void GetViolationsFrom_WhenNoMatchingRules_ReturnsEmpty()
         {
             // Arrange.
             var config = new ReferenceCopConfigBuilder().Build();
@@ -81,6 +80,44 @@
 
             // Assert
             diagnostics.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GetViolationsFrom_WhenNoReferences_ReturnsEmpty()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule("somePattern")
+                .Build();
+            var comparer = Substitute.For<IEqualityComparer<string>>();
+            var detector = new AssemblyNameViolationDetector(comparer, config);
+
+            // Act
+            var diagnostics = detector.GetViolationsFrom(Array.Empty<AssemblyIdentity>());
+
+            // Assert
+            diagnostics.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GetViolationsFrom_WhenNullReference_ThrowsInvalidOperationException()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule("somePattern")
+                .Build();
+            var comparer = Substitute.For<IEqualityComparer<string>>();
+            var detector = new AssemblyNameViolationDetector(comparer, config);
+            var references = new AssemblyIdentity[]
+            {
+                null,
+            };
+
+            // Act
+            Action act = () => detector.GetViolationsFrom(references).First();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>();
         }
     }
 }

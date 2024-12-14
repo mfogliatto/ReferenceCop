@@ -25,6 +25,11 @@
             {
                 foreach (var reference in references)
                 {
+                    if (string.IsNullOrEmpty(reference?.Name))
+                    {
+                        throw new InvalidOperationException("Reference name cannot be null or empty.");
+                    }
+
                     if (this.referenceNameComparer.Equals(rule.Key, reference.Name))
                     {
                         yield return new Violation(rule.Value, reference.Name);
