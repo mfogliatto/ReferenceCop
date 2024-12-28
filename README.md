@@ -71,11 +71,31 @@ Here is an example of a `ReferenceCop.config` file:
 <ReferenceCopConfig>
     <Rules>
         <AssemblyName>
-            <Name>DoNotUse-X</Name>
-            <Description>Use of X is forbidden. Please use Y instead</Description>       
+            <Name>XMustNotBeUsed</Name>
+            <Description>Use of X is forbidden. Ensure that Y is used instead</Description>       
             <Severity>Error</Severity>
             <Pattern>X</Pattern>
         </AssemblyName>
+        <AssemblyName>
+			<Name>TryToAvoidLibraryX</Name>
+			<Description>Consider using Y instead of X</Description>
+			<Severity>Warning</Severity>
+            <Pattern>X</Pattern>
+        </AssemblyName>
+        <AssemblyTag>
+            <Name>AbstractionsShouldNotReferenceImplementations</Name>
+            <Description>Ensure Abstractions do not reference Implementations</Description>
+            <Severity>Error</Severity>
+            <FromAssemblyTag>Abstractions</FromAssemblyTag>
+            <ToAssemblyTag>Implementations</ToAssemblyTag>
+        </AssemblyTag>
+        <AssemblyPath>
+            <Name>AppShouldNotReferenceData</Name>
+            <Description>Ensure UI projects do not reference Data projects</Description>
+            <Severity>Error</Severity>
+            <FromPath>src\UI</FromPath>
+            <ToPath>src\data</ToPath>
+        </AssemblyPath>
     </Rules>
 </ReferenceCopConfig>
 ```
