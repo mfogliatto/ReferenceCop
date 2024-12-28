@@ -1,16 +1,31 @@
 ﻿namespace ReferenceCop.Tests
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
     using Microsoft.CodeAnalysis;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using NSubstitute;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     [TestClass]
     public class AssemblyNameViolationDetectorTests
     {
+        [TestMethod]
+        public void GetViolationsFrom_WhenNoRules_ReturnsEmpty()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfig();
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
+
+            // Act.
+            var result = detector.GetViolationsFrom(new List<AssemblyIdentity> { new AssemblyIdentity("System.Xml.Linq") });
+
+            // Assert.
+            result.Should().BeEmpty();
+        }
+
         [TestMethod]
         public void GetViolationsFrom_WhenMatchingRule_ReturnsViolation()
         {
@@ -67,8 +82,7 @@
         {
             // Arrange.
             var config = new ReferenceCopConfigBuilder().Build();
-            var comparer = Substitute.For<IEqualityComparer<string>>();
-            var detector = new AssemblyNameViolationDetector(comparer, config);
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
             var references = new[]
             {
                 new AssemblyIdentity("System.Xml.Serialization"),
@@ -89,8 +103,7 @@
             var config = new ReferenceCopConfigBuilder()
                 .WithAssemblyNameRule("somePattern")
                 .Build();
-            var comparer = Substitute.For<IEqualityComparer<string>>();
-            var detector = new AssemblyNameViolationDetector(comparer, config);
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
 
             // Act
             var diagnostics = detector.GetViolationsFrom(Array.Empty<AssemblyIdentity>());
@@ -106,8 +119,7 @@
             var config = new ReferenceCopConfigBuilder()
                 .WithAssemblyNameRule("somePattern")
                 .Build();
-            var comparer = Substitute.For<IEqualityComparer<string>>();
-            var detector = new AssemblyNameViolationDetector(comparer, config);
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
             var references = new AssemblyIdentity[]
             {
                 null,

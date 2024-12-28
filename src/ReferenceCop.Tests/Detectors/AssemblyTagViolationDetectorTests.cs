@@ -18,6 +18,20 @@
         private const string UnknownAssemblyTag = "Unknown";
 
         [TestMethod]
+        public void GetViolationsFrom_WhenNoRules_ReturnsEmpty()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfig();
+            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, Substitute.For<IAssemblyTagProvider>());
+
+            // Act.
+            var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
+
+            // Assert.
+            result.Should().BeEmpty();
+        }
+
+        [TestMethod]
         public void GetViolationsFrom_WhenNoReferences_ReturnsEmpty()
         {
             // Arrange.
@@ -25,8 +39,7 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>()
             };
-            var tagProvider = Substitute.For<IAssemblyTagProvider>();
-            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, tagProvider);
+            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, Substitute.For<IAssemblyTagProvider>());
 
             // Act.
             var result = detector.GetViolationsFrom(Enumerable.Empty<string>());
