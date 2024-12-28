@@ -13,6 +13,7 @@
     {
         private const string ResolveProjectReferencesTarget = "ResolveProjectReferences";
         private const string MSBuildSourceProjectFileMetadataKey = "MSBuildSourceProjectFile";
+        private const string ReferenceCopRepositoryRootProperty = "ReferenceCopRepositoryRoot";
 
         public IBuildEngine BuildEngine { get; set; }
         public ITaskHost HostObject { get; set; }
@@ -23,7 +24,8 @@
         [Required]
         public string ConfigFilePath { get; set; }
 
-        private IViolationDetector<string> detector;
+        private IViolationDetector<string> tagViolationDetector;
+        private IViolationDetector<string> pathViolationDetector;
 
         public bool Execute()
         {
@@ -37,9 +39,17 @@
             {
                 var configLoader = new XmlConfigurationLoader(ConfigFilePath);
                 var config = configLoader.Load();
-                this.detector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec, new AssemblyTagProvider());
 
-                foreach (var violation in this.detector.GetViolationsFrom(GetProjectReferences()))
+                this.tagViolationDetector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec, new AssemblyTagProvider());
+                foreach (var violation in this.tagViolationDetector.GetViolationsFrom(GetProjectReferences()))
+                {
+                    success = false;
+                    BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
+                }
+
+                var repositoryRoot = GetResolvedPropertyValue(ReferenceCopRepositoryRootProperty);
+                this.pathViolationDetector = new AssemblyPathViolationDetector(config, ProjectFile.ItemSpec, new AssemblyPathProvider(repositoryRoot));
+                foreach (var violation in this.pathViolationDetector.GetViolationsFrom(GetProjectReferences()))
                 {
                     success = false;
                     BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
@@ -74,6 +84,15 @@
             }
 
             return Enumerable.Empty<string>();
+        }
+
+        private string GetResolvedPropertyValue(string propertyName)
+        {
+            var projectCollection = new ProjectCollection();
+            var project = projectCollection.LoadProject(ProjectFile.ItemSpec);
+            project.ReevaluateIfNecessary();
+
+            return project.GetPropertyValue(propertyName);
         }
     }
 }
