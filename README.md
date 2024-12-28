@@ -15,14 +15,22 @@ In case you are using [Central Package Management](https://learn.microsoft.com/e
 </ItemGroup>
 ```
 
-2. Add a `ReferenceCop.config` file to your project:
+2. Add a `ReferenceCop.config` file to your project and define the repository root for ReferenceCop to use:
 
 ```
 <ItemGroup>
 	<AdditionalFiles Include="./ReferenceCop.config" />
 </ItemGroup>
 
+<PropertyGroup>
+    <ReferenceCopRepositoryRoot>$(MSBuildStartupDirectory)</ReferenceCopRepositoryRoot>
+</PropertyGroup>
+
 ```
+
+The `ReferenceCopRepositoryRoot` property is used to define the root of the repository where the project is located. This is used to resolve the paths of the project references.
+The recommended value for `ReferenceCopRepositoryRoot` is `$(MSBuildStartupDirectory)` as this will typically be the root of the solution where the project is located.
+If this does not work for your project, you can set the value to a different path.
 
 3. Build the project. You will see a set of warnings or errors based on the violations that were detected. Here are the diagnostic descriptors returned:
 
