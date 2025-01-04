@@ -22,18 +22,12 @@
             }
 
             var configFilePath = configFile.Path;
-            using (var stream = new FileStream(configFilePath, FileMode.Open))
-            {
-                this.loadedConfig = ParseConfigFrom(stream);
-            }
+            this.loadedConfig = ReadFromFile(configFilePath);
         }
 
         public XmlConfigurationLoader(string configFilePath)
         {
-            using (var stream = new FileStream(configFilePath, FileMode.Open))
-            {
-                this.loadedConfig = ParseConfigFrom(stream);
-            }
+            this.loadedConfig = ReadFromFile(configFilePath);
         }
 
         internal XmlConfigurationLoader(XmlDocument xmlDocument)
@@ -47,6 +41,14 @@
         public ReferenceCopConfig Load()
         {
             return this.loadedConfig;
+        }
+
+        private static ReferenceCopConfig ReadFromFile(string configFilePath)
+        {
+            using (var stream = new FileStream(configFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return ParseConfigFrom(stream);
+            }
         }
 
         private static ReferenceCopConfig ParseConfigFrom(Stream stream)
