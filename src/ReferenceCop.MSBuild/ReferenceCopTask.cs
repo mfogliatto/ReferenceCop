@@ -14,6 +14,7 @@
         private const string ResolveProjectReferencesTarget = "ResolveProjectReferences";
         private const string MSBuildSourceProjectFileMetadataKey = "MSBuildSourceProjectFile";
         private const string ReferenceCopRepositoryRootProperty = "ReferenceCopRepositoryRoot";
+        private const string ProjectReferenceNode = "ProjectReference";
 
         public IBuildEngine BuildEngine { get; set; }
         public ITaskHost HostObject { get; set; }
@@ -40,8 +41,10 @@
                 var configLoader = new XmlConfigurationLoader(ConfigFilePath);
                 var config = configLoader.Load();
 
+                var projectReferences = GetProjectReferencesFromCsproj();
+
                 this.tagViolationDetector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec, new AssemblyTagProvider());
-                foreach (var violation in this.tagViolationDetector.GetViolationsFrom(GetProjectReferences()))
+                foreach (var violation in this.tagViolationDetector.GetViolationsFrom(projectReferences))
                 {
                     success = false;
                     BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
@@ -49,7 +52,7 @@
 
                 var repositoryRoot = GetResolvedPropertyValue(ReferenceCopRepositoryRootProperty);
                 this.pathViolationDetector = new AssemblyPathViolationDetector(config, ProjectFile.ItemSpec, new AssemblyPathProvider(repositoryRoot));
-                foreach (var violation in this.pathViolationDetector.GetViolationsFrom(GetProjectReferences()))
+                foreach (var violation in this.pathViolationDetector.GetViolationsFrom(projectReferences))
                 {
                     success = false;
                     BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
@@ -64,7 +67,12 @@
             return success;
         }
 
-        private IEnumerable<string> GetProjectReferences()
+        /// <summary>
+        /// Gets the project references using MSBuild.
+        /// </summary>
+        /// <remarks>The returned collection includes transitive ProjectReferences. Currently unused, only kept for historical purposes.</remarks>
+        /// <returns>The collection of ProjectReferences.</returns>
+        private IEnumerable<string> GetProjectReferencesFromBuild()
         {
             var projectCollection = new ProjectCollection();
             var project = projectCollection.LoadProject(ProjectFile.ItemSpec);
@@ -84,6 +92,23 @@
             }
 
             return Enumerable.Empty<string>();
+        }
+
+        /// <summary>
+        /// Gets the project references from the .csproj file.
+        /// </summary>
+        /// <remarks>The returned collection includes only direct ProjectReferences.</remarks>
+        /// <returns>The collection of ProjectReferences.</returns>
+        private List<string> GetProjectReferencesFromCsproj()
+        {
+            var projectCollection = new ProjectCollection();
+            var project = projectCollection.LoadProject(ProjectFile.ItemSpec);
+
+            // Get all ProjectReference items. These are the direct project references.
+            var projectReferences = project.GetItems(ProjectReferenceNode);
+
+            // Extract the Include attribute, which contains the path to the referenced project.
+            return projectReferences.Select(pr => pr.EvaluatedInclude).ToList();
         }
 
         private string GetResolvedPropertyValue(string propertyName)
