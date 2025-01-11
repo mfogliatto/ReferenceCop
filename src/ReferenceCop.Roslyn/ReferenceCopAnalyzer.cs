@@ -14,17 +14,17 @@
             DiagnosticDescriptors.IllegalReferenceRule,
             DiagnosticDescriptors.DiscouragedReferenceRule);
 
+        private const string LaunchDebuggerKey = "build_property.LaunchDebugger";
+        private const string RoslynDebuggerTriggerValue = "Roslyn";
+
         private IViolationDetector<AssemblyIdentity> detector;
 
         public override void Initialize(AnalysisContext context)
         {
-            if (!Debugger.IsAttached)
-            {
-                Debugger.Launch();
-            }
-
             context.RegisterCompilationAction(compilationAnalysisContext =>
             {
+                LaunchDebuggerIfRequested(compilationAnalysisContext);
+
                 try
                 {
                     var configLoader = new XmlConfigurationLoader(compilationAnalysisContext);
@@ -45,6 +45,16 @@
             foreach (var violation in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
             {
                 compilationAnalysisContext.ReportDiagnostic(DiagnosticFactory.CreateFor(violation));
+            }
+        }
+
+        private static void LaunchDebuggerIfRequested(CompilationAnalysisContext compilationAnalysisContext)
+        {
+            var isConfigPresent = compilationAnalysisContext.Options.AnalyzerConfigOptionsProvider.GlobalOptions.TryGetValue(LaunchDebuggerKey, out var launchDebuggerValue);
+            bool launchDebuggerRequested = isConfigPresent && launchDebuggerValue.Contains(RoslynDebuggerTriggerValue);
+            if (!Debugger.IsAttached && launchDebuggerRequested)
+            {
+                Debugger.Launch();
             }
         }
     }

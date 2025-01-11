@@ -10,6 +10,6 @@
     <!-- Throw an error if AdditionalFiles property is not defined -->
     <Error Condition="!Exists('@(AdditionalFiles)')" Code="RC0000" Text="ReferenceCop configuration file was not found or defined in the AdditionalFiles property." />
 
-    <ReferenceCopTask ProjectFile="@(ProjectFile)" ConfigFilePath="@(AdditionalFiles)" />
+    <ReferenceCopTask ProjectFile="@(ProjectFile)" ConfigFilePath="@(AdditionalFiles)" LaunchDebugger="$(LaunchDebugger)" />
   </Target>
 </Project>

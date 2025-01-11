@@ -8,6 +8,7 @@
     using Microsoft.Build.Execution;
     using Microsoft.Build.Framework;
     using Microsoft.Build.Logging;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     public class ReferenceCopTask : ITask
     {
@@ -15,6 +16,7 @@
         private const string MSBuildSourceProjectFileMetadataKey = "MSBuildSourceProjectFile";
         private const string ReferenceCopRepositoryRootProperty = "ReferenceCopRepositoryRoot";
         private const string ProjectReferenceNode = "ProjectReference";
+        private const string MSBuildDebuggerTriggerValue = "MSBuild";
 
         public IBuildEngine BuildEngine { get; set; }
         public ITaskHost HostObject { get; set; }
@@ -25,15 +27,14 @@
         [Required]
         public string ConfigFilePath { get; set; }
 
+        public string LaunchDebugger { get; set; }
+
         private IViolationDetector<string> tagViolationDetector;
         private IViolationDetector<string> pathViolationDetector;
 
         public bool Execute()
         {
-            if (!Debugger.IsAttached)
-            {
-                Debugger.Launch();
-            }
+            LaunchDebuggerIfRequested();
 
             bool success = true;
             try
@@ -118,6 +119,15 @@
             project.ReevaluateIfNecessary();
 
             return project.GetPropertyValue(propertyName);
+        }
+
+        private void LaunchDebuggerIfRequested()
+        {
+            bool launchDebuggerRequested = !string.IsNullOrEmpty(LaunchDebugger) && LaunchDebugger.Contains(MSBuildDebuggerTriggerValue);
+            if (!Debugger.IsAttached && launchDebuggerRequested)
+            {
+                Debugger.Launch();
+            }
         }
     }
 }
