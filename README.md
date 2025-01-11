@@ -53,15 +53,15 @@ Besides the common properties, each rule can have the following properties depen
 - `Pattern` - The pattern to search for in the name of a project or package reference. It can be either an exact reference AssemblyName,
 or a prefix pattern that ends with '*'.
 
-#### `Project Path` (Not implemented yet)
+#### `Project Path`
 
 - `Pattern` - The pattern to search for in the path of a project references. The value should be relative to the path where the config file is located,
 and it can be either an exact path or a prefix pattern that ends with '*'.
 
-#### `Assembly Tag` (Not implemented yet)
+#### `Project Tag`
 
-- `Tag` - The tag to search for in the project's manifest that qualifies the project in some way. For example, a tag can indicate
-the layer to which the project belongs: `UI`, `Business`, `Data`, etc.
+- `Tag` - The tag to search for in the project's manifest that qualifies the project in some way ReferenceCop will look for the `ProjectTag` node for this detection. 
+- For example, a tag can indicate the layer to which the project belongs: `UI`, `Business`, `Data`, etc.
 
 ### Example
 
@@ -82,13 +82,13 @@ Here is an example of a `ReferenceCop.config` file:
 			<Severity>Warning</Severity>
             <Pattern>X</Pattern>
         </AssemblyName>
-        <AssemblyTag>
+        <ProjectTag>
             <Name>AbstractionsShouldNotReferenceImplementations</Name>
             <Description>Ensure Abstractions do not reference Implementations</Description>
             <Severity>Error</Severity>
-            <FromAssemblyTag>Abstractions</FromAssemblyTag>
-            <ToAssemblyTag>Implementations</ToAssemblyTag>
-        </AssemblyTag>
+            <FromProjectTag>Abstractions</FromProjectTag>
+            <ToProjectTag>Implementations</ToProjectTag>
+        </ProjectTag>
         <ProjectPath>
             <Name>AppShouldNotReferenceData</Name>
             <Description>Ensure UI projects do not reference Data projects</Description>

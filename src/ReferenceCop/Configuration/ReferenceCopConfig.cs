@@ -9,7 +9,7 @@
     public class ReferenceCopConfig
     {
         [XmlArrayItem(typeof(AssemblyName))]
-        [XmlArrayItem(typeof(AssemblyTag))]
+        [XmlArrayItem(typeof(ProjectTag))]
         [XmlArrayItem(typeof(ProjectPath))]
         public List<Rule> Rules { get; set; }
 
@@ -20,7 +20,7 @@
 
         [Serializable]
         [XmlInclude(typeof(AssemblyName))]
-        [XmlInclude(typeof(AssemblyTag))]
+        [XmlInclude(typeof(ProjectTag))]
         [XmlInclude(typeof(ProjectPath))]
         public abstract class Rule
         {
@@ -46,10 +46,10 @@
         }
 
         [Serializable]
-        public class AssemblyTag : Rule
+        public class ProjectTag : Rule
         {
-            public string FromAssemblyTag { get; set; }
-            public string ToAssemblyTag { get; set; }
+            public string FromProjectTag { get; set; }
+            public string ToProjectTag { get; set; }
         }
 
         [Serializable]

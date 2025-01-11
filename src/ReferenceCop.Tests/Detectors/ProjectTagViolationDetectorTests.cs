@@ -8,21 +8,21 @@
     using NSubstitute;
 
     [TestClass]
-    public class AssemblyTagViolationDetectorTests
+    public class ProjectTagViolationDetectorTests
     {
         private const string SourceFilePath = "testProject.csproj";
         private const string ReferenceFilePath1 = "reference1.csproj";
         private const string ReferenceFilePath2 = "reference2.csproj";
-        private const string AssemblyTag1 = "Tag1";
-        private const string AssemblyTag2 = "Tag2";
-        private const string UnknownAssemblyTag = "Unknown";
+        private const string ProjectTag1 = "Tag1";
+        private const string ProjectTag2 = "Tag2";
+        private const string UnknownProjectTag = "Unknown";
 
         [TestMethod]
         public void GetViolationsFrom_WhenNoRules_ReturnsEmpty()
         {
             // Arrange.
             var config = new ReferenceCopConfig();
-            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, Substitute.For<IAssemblyTagProvider>());
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, Substitute.For<IProjectTagProvider>());
 
             // Act.
             var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
@@ -39,7 +39,7 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>()
             };
-            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, Substitute.For<IAssemblyTagProvider>());
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, Substitute.For<IProjectTagProvider>());
 
             // Act.
             var result = detector.GetViolationsFrom(Enumerable.Empty<string>());
@@ -57,13 +57,13 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.AssemblyTag { FromAssemblyTag = nonMatchingTag, ToAssemblyTag = AssemblyTag2 }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = nonMatchingTag, ToProjectTag = ProjectTag2 }
                             }
             };
-            var tagProvider = Substitute.For<IAssemblyTagProvider>();
-            tagProvider.GetAssemblyTag(SourceFilePath).Returns(AssemblyTag1);
-            tagProvider.GetAssemblyTag(ReferenceFilePath1).Returns(nonMatchingTag);
-            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, tagProvider);
+            var tagProvider = Substitute.For<IProjectTagProvider>();
+            tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
+            tagProvider.GetProjectTag(ReferenceFilePath1).Returns(nonMatchingTag);
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
             var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
@@ -80,21 +80,21 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.AssemblyTag { FromAssemblyTag = AssemblyTag1, ToAssemblyTag = AssemblyTag2 }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 }
                             }
             };
-            var tagProvider = Substitute.For<IAssemblyTagProvider>();
-            tagProvider.GetAssemblyTag(SourceFilePath).Returns(AssemblyTag1);
-            tagProvider.GetAssemblyTag(ReferenceFilePath1).Returns(AssemblyTag2);
-            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, tagProvider);
+            var tagProvider = Substitute.For<IProjectTagProvider>();
+            tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
+            tagProvider.GetProjectTag(ReferenceFilePath1).Returns(ProjectTag2);
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
             var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
 
             // Assert.
             result.Should().ContainSingle()
-                .Which.Should().Match<Violation>(v => (v.Rule as ReferenceCopConfig.AssemblyTag).FromAssemblyTag == AssemblyTag1 &&
-                                                      (v.Rule as ReferenceCopConfig.AssemblyTag).ToAssemblyTag == AssemblyTag2);
+                .Which.Should().Match<Violation>(v => (v.Rule as ReferenceCopConfig.ProjectTag).FromProjectTag == ProjectTag1 &&
+                                                      (v.Rule as ReferenceCopConfig.ProjectTag).ToProjectTag == ProjectTag2);
         }
 
         [TestMethod]
@@ -105,14 +105,14 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.AssemblyTag { FromAssemblyTag = AssemblyTag1, ToAssemblyTag = AssemblyTag2 }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 }
                             }
             };
-            var tagProvider = Substitute.For<IAssemblyTagProvider>();
-            tagProvider.GetAssemblyTag(SourceFilePath).Returns(AssemblyTag1);
-            tagProvider.GetAssemblyTag(ReferenceFilePath1).Returns(AssemblyTag2);
-            tagProvider.GetAssemblyTag(ReferenceFilePath2).Returns(AssemblyTag2);
-            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, tagProvider);
+            var tagProvider = Substitute.For<IProjectTagProvider>();
+            tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
+            tagProvider.GetProjectTag(ReferenceFilePath1).Returns(ProjectTag2);
+            tagProvider.GetProjectTag(ReferenceFilePath2).Returns(ProjectTag2);
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
             var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1, ReferenceFilePath2 });
@@ -122,19 +122,19 @@
         }
 
         [TestMethod]
-        public void GetViolationsFrom_WhenUnknownAssemblyTag_ReturnsEmpty()
+        public void GetViolationsFrom_WhenUnknownProjectTag_ReturnsEmpty()
         {
             // Arrange.
             var config = new ReferenceCopConfig
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.AssemblyTag { FromAssemblyTag = AssemblyTag1, ToAssemblyTag = AssemblyTag2 }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 }
                             }
             };
-            var tagProvider = Substitute.For<IAssemblyTagProvider>();
-            tagProvider.GetAssemblyTag(SourceFilePath).Returns(UnknownAssemblyTag);
-            var detector = new AssemblyTagViolationDetector(config, "nonexistent.csproj", tagProvider);
+            var tagProvider = Substitute.For<IProjectTagProvider>();
+            tagProvider.GetProjectTag(SourceFilePath).Returns(UnknownProjectTag);
+            var detector = new ProjectTagViolationDetector(config, "nonexistent.csproj", tagProvider);
 
             // Act.
             var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
@@ -151,9 +151,9 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>()
             };
-            var tagProvider = Substitute.For<IAssemblyTagProvider>();
-            tagProvider.When(x => x.GetAssemblyTag(Arg.Any<string>())).Do(x => { throw new InvalidOperationException(); });
-            var detector = new AssemblyTagViolationDetector(config, SourceFilePath, tagProvider);
+            var tagProvider = Substitute.For<IProjectTagProvider>();
+            tagProvider.When(x => x.GetProjectTag(Arg.Any<string>())).Do(x => { throw new InvalidOperationException(); });
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
             Action act = () => detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 }).ToList();

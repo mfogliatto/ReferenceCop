@@ -43,7 +43,7 @@
 
                 var projectReferences = GetProjectReferencesFromCsproj();
 
-                this.tagViolationDetector = new AssemblyTagViolationDetector(config, ProjectFile.ItemSpec, new AssemblyTagProvider());
+                this.tagViolationDetector = new ProjectTagViolationDetector(config, ProjectFile.ItemSpec, new ProjectTagProvider());
                 foreach (var violation in this.tagViolationDetector.GetViolationsFrom(projectReferences))
                 {
                     success = false;

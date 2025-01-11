@@ -6,26 +6,26 @@ namespace ReferenceCop
     using System.Xml.Linq;
 
     [ExcludeFromCodeCoverage]
-    public class AssemblyTagProvider : IAssemblyTagProvider
+    public class ProjectTagProvider : IProjectTagProvider
     {
         internal const string PropertyGroupNode = "PropertyGroup";
-        internal const string AssemblyTagNode = "AssemblyTag";
-        internal const string UnknownAssemblyTag = "Unknown";
+        internal const string ProjectTagNode = "ProjectTag";
+        internal const string UnknownProjectTag = "Unknown";
 
-        public string GetAssemblyTag(string projectFilePath)
+        public string GetProjectTag(string projectFilePath)
         {
             if (!File.Exists(projectFilePath))
             {
-                return UnknownAssemblyTag;
+                return UnknownProjectTag;
             }
 
             var projectFile = XDocument.Load(projectFilePath);
-            var assemblyTag = projectFile
+            var projectTag = projectFile
                 .Descendants(PropertyGroupNode)
-                .Elements(AssemblyTagNode)
+                .Elements(ProjectTagNode)
                 .FirstOrDefault()?.Value;
 
-            return assemblyTag ?? UnknownAssemblyTag;
+            return projectTag ?? UnknownProjectTag;
         }
     }
 }
