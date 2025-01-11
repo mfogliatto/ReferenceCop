@@ -51,7 +51,7 @@
                 }
 
                 var repositoryRoot = GetResolvedPropertyValue(ReferenceCopRepositoryRootProperty);
-                this.pathViolationDetector = new AssemblyPathViolationDetector(config, ProjectFile.ItemSpec, new AssemblyPathProvider(repositoryRoot));
+                this.pathViolationDetector = new ProjectPathViolationDetector(config, ProjectFile.ItemSpec, new ProjectPathProvider(repositoryRoot));
                 foreach (var violation in this.pathViolationDetector.GetViolationsFrom(projectReferences))
                 {
                     success = false;

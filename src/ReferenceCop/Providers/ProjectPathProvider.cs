@@ -3,11 +3,11 @@
     using System;
     using System.IO;
 
-    public class AssemblyPathProvider : IAssemblyPathProvider
+    public class ProjectPathProvider : IProjectPathProvider
     {
         private readonly string repositoryRoot;
 
-        public AssemblyPathProvider(string repositoryRoot)
+        public ProjectPathProvider(string repositoryRoot)
         {
             if (repositoryRoot == null) throw new ArgumentNullException(nameof(repositoryRoot));
 
@@ -18,7 +18,7 @@
         /// Gets the relative path of the project file path from the repository root.
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
-        public string GetAssemblyPath(string projectFilePath)
+        public string GetRelativePath(string projectFilePath)
         {
             if (projectFilePath == null) throw new ArgumentNullException(nameof(projectFilePath));
 

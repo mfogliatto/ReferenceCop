@@ -53,7 +53,7 @@ Besides the common properties, each rule can have the following properties depen
 - `Pattern` - The pattern to search for in the name of a project or package reference. It can be either an exact reference AssemblyName,
 or a prefix pattern that ends with '*'.
 
-#### `Assembly Path` (Not implemented yet)
+#### `Project Path` (Not implemented yet)
 
 - `Pattern` - The pattern to search for in the path of a project references. The value should be relative to the path where the config file is located,
 and it can be either an exact path or a prefix pattern that ends with '*'.
@@ -89,13 +89,13 @@ Here is an example of a `ReferenceCop.config` file:
             <FromAssemblyTag>Abstractions</FromAssemblyTag>
             <ToAssemblyTag>Implementations</ToAssemblyTag>
         </AssemblyTag>
-        <AssemblyPath>
+        <ProjectPath>
             <Name>AppShouldNotReferenceData</Name>
             <Description>Ensure UI projects do not reference Data projects</Description>
             <Severity>Error</Severity>
             <FromPath>src\UI</FromPath>
             <ToPath>src\data</ToPath>
-        </AssemblyPath>
+        </ProjectPath>
     </Rules>
 </ReferenceCopConfig>
 ```

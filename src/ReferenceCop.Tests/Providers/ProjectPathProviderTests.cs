@@ -5,16 +5,16 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class AssemblyPathProviderTests
+    public class ProjectPathProviderTests
     {
         [TestMethod]
-        public void GetAssemblyPath_WhenRepositoryRootIsNull_ThrowsArgumentNullException()
+        public void GetRelativePath_WhenRepositoryRootIsNull_ThrowsArgumentNullException()
         {
             // Arrange.
             string nullRepositoryRoot = null;
 
             // Act.
-            Action act = () => new AssemblyPathProvider(nullRepositoryRoot);
+            Action act = () => new ProjectPathProvider(nullRepositoryRoot);
             
 
             // Assert.
@@ -22,14 +22,14 @@
         }
 
         [TestMethod]
-        public void GetAssemblyPath_WhenProjectFilePathIsNull_ThrowsArgumentNullException()
+        public void GetRelativePath_WhenProjectFilePathIsNull_ThrowsArgumentNullException()
         {
             // Arrange.
-            var provider = new AssemblyPathProvider(@"C:\Repo\Project");
+            var provider = new ProjectPathProvider(@"C:\Repo\Project");
             string nullProjectFilePath = null;
 
             // Act.
-            Action act = () => provider.GetAssemblyPath(nullProjectFilePath);
+            Action act = () => provider.GetRelativePath(nullProjectFilePath);
 
             // Assert.
             act.Should().Throw<ArgumentNullException>().WithMessage("*projectFilePath*");
@@ -44,16 +44,16 @@
         [DataRow(@"C:\Repo\Project\", @"C:\Repo\AnotherProject\Project.csproj", @"..\AnotherProject\Project.csproj")]
         [DataRow(@"C:\Repo", @"D:\AnotherRepo\Project\Project.csproj", @"D:\AnotherRepo\Project\Project.csproj")]
         [DataRow(@"C:\Repo\", @"D:\AnotherRepo\Project\Project.csproj", @"D:\AnotherRepo\Project\Project.csproj")]
-        public void GetAssemblyPath_ReturnsPathRelativeToRepositoryRoot(string repositoryRoot, string projectFilePath, string expectedAssemblyPath)
+        public void GetRelativePath_ReturnsPathRelativeToRepositoryRoot(string repositoryRoot, string projectFilePath, string expectedRelativePath)
         {
             // Arrange.
-            var provider = new AssemblyPathProvider(repositoryRoot);
+            var provider = new ProjectPathProvider(repositoryRoot);
 
             // Act.
-            var result = provider.GetAssemblyPath(projectFilePath);
+            var result = provider.GetRelativePath(projectFilePath);
 
             // Assert.
-            result.Should().Be(expectedAssemblyPath);
+            result.Should().Be(expectedRelativePath);
         }
     }
 }

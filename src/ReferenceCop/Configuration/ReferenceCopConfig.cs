@@ -10,7 +10,7 @@
     {
         [XmlArrayItem(typeof(AssemblyName))]
         [XmlArrayItem(typeof(AssemblyTag))]
-        [XmlArrayItem(typeof(AssemblyPath))]
+        [XmlArrayItem(typeof(ProjectPath))]
         public List<Rule> Rules { get; set; }
 
         public ReferenceCopConfig()
@@ -21,7 +21,7 @@
         [Serializable]
         [XmlInclude(typeof(AssemblyName))]
         [XmlInclude(typeof(AssemblyTag))]
-        [XmlInclude(typeof(AssemblyPath))]
+        [XmlInclude(typeof(ProjectPath))]
         public abstract class Rule
         {
             [XmlElement]
@@ -53,7 +53,7 @@
         }
 
         [Serializable]
-        public class AssemblyPath : Rule
+        public class ProjectPath : Rule
         {
             public string FromPath { get; set; }
             public string ToPath { get; set; }

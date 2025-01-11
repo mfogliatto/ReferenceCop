@@ -7,7 +7,7 @@
     using NSubstitute;
 
     [TestClass]
-    public class AssemblyPathViolationDetectorTests
+    public class ProjectPathViolationDetectorTests
     {
         private const string ProjectOneDir = @"C:\Repo\ProjectOne\";
         private string ProjectOneFilePath = $"{ProjectOneDir}Project.csproj";
@@ -21,7 +21,7 @@
         {
             // Arrange.
             var config = new ReferenceCopConfig();
-            var detector = new AssemblyPathViolationDetector(config, ProjectOneFilePath, Substitute.For<IAssemblyPathProvider>());
+            var detector = new ProjectPathViolationDetector(config, ProjectOneFilePath, Substitute.For<IProjectPathProvider>());
             var references = new List<string> { ProjectOneFilePath };
 
             // Act.
@@ -36,7 +36,7 @@
         {
             // Arrange.
             var config = new ReferenceCopConfig();
-            var detector = new AssemblyPathViolationDetector(config, ProjectOneFilePath, Substitute.For<IAssemblyPathProvider>());
+            var detector = new ProjectPathViolationDetector(config, ProjectOneFilePath, Substitute.For<IProjectPathProvider>());
 
             // Act.
             var result = detector.GetViolationsFrom(Enumerable.Empty<string>());
@@ -53,12 +53,12 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                 {
-                    new ReferenceCopConfig.AssemblyPath { FromPath = @"C:\OtherRepo", ToPath = ProjectOneDir }
+                    new ReferenceCopConfig.ProjectPath { FromPath = @"C:\OtherRepo", ToPath = ProjectOneDir }
                 }
             };
-            var assemblyPathProvider = Substitute.For<IAssemblyPathProvider>();
-            assemblyPathProvider.GetAssemblyPath(ProjectOneFilePath).Returns(ProjectOneDir);
-            var detector = new AssemblyPathViolationDetector(config, ProjectOneFilePath, assemblyPathProvider);
+            var projectPathProvider = Substitute.For<IProjectPathProvider>();
+            projectPathProvider.GetRelativePath(ProjectOneFilePath).Returns(ProjectOneDir);
+            var detector = new ProjectPathViolationDetector(config, ProjectOneFilePath, projectPathProvider);
             var references = new List<string> { ProjectTwoFilePath };
 
             // Act.
@@ -76,13 +76,13 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                 {
-                    new ReferenceCopConfig.AssemblyPath { FromPath = ProjectOneDir, ToPath = ProjectTwoDir }
+                    new ReferenceCopConfig.ProjectPath { FromPath = ProjectOneDir, ToPath = ProjectTwoDir }
                 }
             };
-            var assemblyPathProvider = Substitute.For<IAssemblyPathProvider>();
-            assemblyPathProvider.GetAssemblyPath(ProjectOneFilePath).Returns(ProjectOneDir);
-            assemblyPathProvider.GetAssemblyPath(ProjectTwoFilePath).Returns(ProjectTwoDir);
-            var detector = new AssemblyPathViolationDetector(config, ProjectOneFilePath, assemblyPathProvider);
+            var projectPathProvider = Substitute.For<IProjectPathProvider>();
+            projectPathProvider.GetRelativePath(ProjectOneFilePath).Returns(ProjectOneDir);
+            projectPathProvider.GetRelativePath(ProjectTwoFilePath).Returns(ProjectTwoDir);
+            var detector = new ProjectPathViolationDetector(config, ProjectOneFilePath, projectPathProvider);
             var references = new List<string> { ProjectTwoFilePath };
 
             // Act.
@@ -101,15 +101,15 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                 {
-                    new ReferenceCopConfig.AssemblyPath { FromPath = ProjectOneDir, ToPath = ProjectTwoDir },
-                    new ReferenceCopConfig.AssemblyPath { FromPath = ProjectOneDir, ToPath = ProjectThreeDir }
+                    new ReferenceCopConfig.ProjectPath { FromPath = ProjectOneDir, ToPath = ProjectTwoDir },
+                    new ReferenceCopConfig.ProjectPath { FromPath = ProjectOneDir, ToPath = ProjectThreeDir }
                 }
             };
-            var assemblyPathProvider = Substitute.For<IAssemblyPathProvider>();
-            assemblyPathProvider.GetAssemblyPath(ProjectOneFilePath).Returns(ProjectOneDir);
-            assemblyPathProvider.GetAssemblyPath(ProjectTwoFilePath).Returns(ProjectTwoDir);
-            assemblyPathProvider.GetAssemblyPath(ProjectThreeFilePath).Returns(ProjectThreeDir);
-            var detector = new AssemblyPathViolationDetector(config, ProjectOneFilePath, assemblyPathProvider);
+            var projectPathProvider = Substitute.For<IProjectPathProvider>();
+            projectPathProvider.GetRelativePath(ProjectOneFilePath).Returns(ProjectOneDir);
+            projectPathProvider.GetRelativePath(ProjectTwoFilePath).Returns(ProjectTwoDir);
+            projectPathProvider.GetRelativePath(ProjectThreeFilePath).Returns(ProjectThreeDir);
+            var detector = new ProjectPathViolationDetector(config, ProjectOneFilePath, projectPathProvider);
             var references = new List<string> { ProjectTwoFilePath, ProjectThreeFilePath };
 
             // Act.
