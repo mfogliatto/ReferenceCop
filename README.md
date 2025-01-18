@@ -1,6 +1,8 @@
 # ReferenceCop
 ReferenceCop is a tool that allows .NET teams to enforce dependency management rules at build time and prevent certain references from being added to a project.
 
+![Build Status](https://github.com/mfogliatto/ReferenceCop/actions/workflows/official-build.yaml/badge.svg)
+
 ## Usage
 
 To enable ReferenceCop in your project, follow the steps below:
