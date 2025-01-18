@@ -16,12 +16,19 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: src/ReferenceCop.Package
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
+      working-directory: src/ReferenceCop.Package
       
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+    - name: Run Tests in ReferenceCop.Tests
+      run: dotnet test --verbosity normal
+      working-directory: src/ReferenceCop.Tests
+
+    - name: Run Tests in ReferenceCop.Roslyn.Tests
+      run: dotnet test --verbosity normal
+      working-directory: src/ReferenceCop.Roslyn.Tests
 
     # - name: Publish NuGet Package
     #   run: |
