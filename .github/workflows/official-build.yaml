@@ -1,4 +1,4 @@
-name: NuGet Publish CI/CD Pipeline
+name: Official Build
 
 on:
   push:
