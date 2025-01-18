@@ -37,6 +37,7 @@ If this does not work for your project, you can set the value to a different pat
 ## Configuration
 
 The ReferenceCop.config file defines a set of rules to be enforced. The config file should be added to the project as an `AdditionalFile`.
+This file will contain the rules you want to enforce. The contents of this configuration are explained in the section below.
 
 ### Rule Properties
 
@@ -51,7 +52,7 @@ Besides the common properties, each rule can have the following properties depen
 #### `AssemblyName`
 
 - `Pattern` - The pattern to search for in the name of a project or package reference. It can be either an exact reference AssemblyName,
-or a prefix pattern that ends with '*'.
+or a prefix pattern that ends with '*'. This can be either a project reference or a package reference.
 
 #### `Project Path`
 
@@ -60,8 +61,8 @@ and it can be either an exact path or a prefix pattern that ends with '*'.
 
 #### `Project Tag`
 
-- `Tag` - The tag to search for in the project's manifest that qualifies the project in some way ReferenceCop will look for the `ProjectTag` node for this detection. 
-- For example, a tag can indicate the layer to which the project belongs: `UI`, `Business`, `Data`, etc.
+- `Tag` - The tag to search for in the project's `csproj` file that qualifies the project in some way. ReferenceCop will look for the `ProjectTag` node for this detection. 
+- For example, a tag can indicate the layer that the project belongs to: `UI`, `Business`, `Data`, etc.
 
 ### Example
 
@@ -107,10 +108,8 @@ RC0002| "Discouraged references" | Warning
 
 ### Scaling Configuration
 
-Alternatively, and in case you'd like to apply the config to several projects in a directory, you can do the same in a `Directory.Build.props` file by [Customizing the build by folder](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=vs-2022).
+In case you'd like to enable ReferenceCop and apply the same configuration to multiple projects in a directory, you can do that in a `Directory.Build.props` file by [Customizing the build by folder](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=vs-2022).
 
-This file will contain the rules you want to enforce. The contents of this configuration are explained in the section below.
-
-# License
+## License
 
 ReferenceCop is licensed under the MIT license. See LICENSE for more information.
