@@ -11,14 +11,12 @@
     <PackageId>ReferenceCop</PackageId>
     <PackageVersion>0.0.10</PackageVersion>
     <Authors>Marco Fogliatto</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/mfogliatto/ReferenceCop/blob/main/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/mfogliatto/ReferenceCop</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>ReferenceCop</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <Copyright>Copyright</Copyright>
+    <Description>
+      ReferenceCop is a tool that allows .NET teams to enforce dependency management rules at build time and prevent certain references from being added to a project.
+    </Description>
     <PackageTags>ReferenceCop, analyzers</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
