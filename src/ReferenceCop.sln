@@ -25,6 +25,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Tests", "Refer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.MSBuild", "ReferenceCop.MSBuild\ReferenceCop.MSBuild.csproj", "{06921A6C-BA8A-43B3-9458-50470FB0EAAA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0F98B7C6-ADDF-456C-BC57-2712D8B102DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{E6B13918-6219-46E4-AF3D-DBB6E7304023}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\pr-build.yaml = ..\.github\workflows\pr-build.yaml
+		..\.github\workflows\official-build.yaml = ..\.github\workflows\official-build.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +74,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E6B13918-6219-46E4-AF3D-DBB6E7304023} = {0F98B7C6-ADDF-456C-BC57-2712D8B102DD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5FA8A0B9-CE7A-49E1-ADB7-1B283E09AB38}
