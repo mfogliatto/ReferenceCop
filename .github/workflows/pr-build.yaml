@@ -11,14 +11,26 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
         
     - name: Restore dependencies in ReferenceCop.Package
       run: dotnet restore
       working-directory: src/ReferenceCop.Package
-      
+
+    - name: Set Default NuGet Package Version Environment Variable (for non-tagged builds)
+      run: echo "PKGVERSION=0.0.1-prebuild" >> $env:GITHUB_ENV
+
+    - name: Override NuGet Package Version Environment Variable with tag (if applicable)
+      if: ${{ github.ref_type == 'tag' }}
+      env:
+         TAG: ${{ github.ref_name }}
+      run: echo "PKGVERSION=${TAG#v}" >> $env:GITHUB_ENV
+
+    - name: Display NuGet Package Version Environment Variable
+      run: echo "version $env:PKGVERSION"
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
       working-directory: src/ReferenceCop.Package
@@ -30,3 +42,10 @@ jobs:
     - name: Run Tests in ReferenceCop.Roslyn.Tests
       run: dotnet test --verbosity normal
       working-directory: src/ReferenceCop.Roslyn.Tests
+
+    - name: Publish NuGet Package
+      # if: github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v')
+      run: |
+        dotnet pack --configuration Release --no-build --output nupkgs /p:PackageVersion=$env:PKGVERSION
+        dotnet nuget push **/nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      working-directory: src/ReferenceCop.Package

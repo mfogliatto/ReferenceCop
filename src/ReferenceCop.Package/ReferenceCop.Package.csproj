@@ -9,7 +9,6 @@
 
   <PropertyGroup>
     <PackageId>ReferenceCop</PackageId>
-    <PackageVersion>0.0.10</PackageVersion>
     <Authors>Marco Fogliatto</Authors>
     <PackageLicenseUrl>https://github.com/mfogliatto/ReferenceCop/blob/main/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/mfogliatto/ReferenceCop</RepositoryUrl>
