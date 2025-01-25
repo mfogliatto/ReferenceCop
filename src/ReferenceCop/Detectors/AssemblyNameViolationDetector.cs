@@ -10,8 +10,6 @@
         private readonly Dictionary<string, ReferenceCopConfig.Rule> rules;
         private readonly IEqualityComparer<string> referenceNameComparer;
 
-        private ReferenceCopConfig config;
-
         public AssemblyNameViolationDetector(IEqualityComparer<string> referenceNameComparer, ReferenceCopConfig config)
         {
             this.rules = new Dictionary<string, ReferenceCopConfig.Rule>(referenceNameComparer);
