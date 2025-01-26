@@ -1,7 +1,10 @@
 # ReferenceCop
-ReferenceCop is a tool that allows .NET teams to enforce dependency management rules at build time and prevent certain references from being added to a project.
+ReferenceCop is a suite of tools (including a Roslyn analyzer and an MSBuild task) that work together to help .NET teams 
+enforce agreed-upon dependency management rules at build time. Prevents discouraged or prohibited references from being 
+added to projects, maintaining clean architecture as defined by your team.
 
 ![Build Status](https://github.com/mfogliatto/ReferenceCop/actions/workflows/official-build.yaml/badge.svg)
+![NuGet Version](https://img.shields.io/nuget/v/ReferenceCop.svg)
 
 ## Usage
 
