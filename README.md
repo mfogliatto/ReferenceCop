@@ -74,7 +74,7 @@ and it can be either an exact path or a prefix pattern that ends with '*'.
 Here is an example of a `ReferenceCop.config` file:
 
 ```xml
-<ReferenceCopConfig>
+<ReferenceCopConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/mfogliatto/ReferenceCop/main/ReferenceCopConfig.xsd">
     <Rules>
         <AssemblyName>
             <Name>XMustNotBeUsed</Name>
@@ -108,8 +108,10 @@ Here is an example of a `ReferenceCop.config` file:
 
 ### Diagnostic Descriptors
 
-RC0001| "Illegal references" | Error
-RC0002| "Discouraged references" | Warning
+| Code  | Description              | Severity |
+|-------|--------------------------|----------|
+| RC0001| Illegal references       | Error    |
+| RC0002| Discouraged references   | Warning  |
 
 ### Scaling Configuration
 
