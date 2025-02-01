@@ -1,0 +1,18 @@
+{
+  "settings": {
+    "documentationRules": {
+      "documentInternalElements": false,
+      "documentExposedElements": false,
+      "documentPrivateElements": false,
+      "documentPrivateFields": false,
+      "documentInterfaces": false
+    },
+    "orderingRules": {
+      "usingDirectivesPlacement": "insideNamespace",
+      "systemUsingDirectivesFirst": true
+    },
+    "layoutRules": {
+      "newlineAtEndOfFile": "require"
+    }
+  }
+}
