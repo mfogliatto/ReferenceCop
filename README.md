@@ -16,7 +16,7 @@ In case you are using [Central Package Management](https://learn.microsoft.com/e
 
 ```
 <ItemGroup>
-	<GlobalPackageReference Include="ReferenceCop" Version="{LatestVersion}" />
+    <GlobalPackageReference Include="ReferenceCop" Version="{LatestVersion}" />
 </ItemGroup>
 ```
 
@@ -24,7 +24,7 @@ In case you are using [Central Package Management](https://learn.microsoft.com/e
 
 ```
 <ItemGroup>
-	<AdditionalFiles Include="./ReferenceCop.config" />
+    <AdditionalFiles Include="./ReferenceCop.config" />
 </ItemGroup>
 
 <PropertyGroup>
@@ -59,12 +59,12 @@ Besides the common properties, each rule can have the following properties depen
 - `Pattern` - The pattern to search for in the name of a project or package reference. It can be either an exact reference AssemblyName,
 or a prefix pattern that ends with '*'. This can be either a project reference or a package reference.
 
-#### `Project Path`
+#### `ProjectPath`
 
 - `Pattern` - The pattern to search for in the path of a project references. The value should be relative to the path where the config file is located,
 and it can be either an exact path or a prefix pattern that ends with '*'.
 
-#### `Project Tag`
+#### `ProjectTag`
 
 - `Tag` - The tag to search for in the project's `csproj` file that qualifies the project in some way. ReferenceCop will look for the `ProjectTag` node for this detection. 
 - For example, a tag can indicate the layer that the project belongs to: `UI`, `Business`, `Data`, etc.
