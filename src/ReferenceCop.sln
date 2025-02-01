@@ -17,7 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\CONTRIBUTING.md = ..\CONTRIBUTING.md
 		Directory.Build.targets = Directory.Build.targets
 		..\README.md = ..\README.md
-		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceCop.Roslyn", "ReferenceCop.Roslyn\ReferenceCop.Roslyn.csproj", "{1DB93B03-1F4A-457F-92DC-03B535849112}"
