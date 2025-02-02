@@ -39,7 +39,7 @@ jobs:
       if: ${{ github.ref_type == 'tag' }}
       env:
          TAG: ${{ github.ref_name }}
-      run: echo "PKGVERSION=${GITHUB_REF#refs/tags/v}" >> $env:GITHUB_ENV
+      run: echo "PKGVERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
     - name: Display NuGet Package Version Environment Variable (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
