@@ -30,3 +30,7 @@ jobs:
     - name: Run Tests in ReferenceCop.Roslyn.Tests
       run: dotnet test --verbosity normal
       working-directory: src/ReferenceCop.Roslyn.Tests
+
+    - name: Run Tests in ReferenceCop.MSBuild.Tests
+      run: dotnet test --verbosity normal
+      working-directory: src/ReferenceCop.MSBuild.Tests

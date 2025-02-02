@@ -31,6 +31,10 @@ jobs:
       run: dotnet test --verbosity normal
       working-directory: src/ReferenceCop.Roslyn.Tests
 
+    - name: Run Tests in ReferenceCop.MSBuild.Tests
+      run: dotnet test --verbosity normal
+      working-directory: src/ReferenceCop.MSBuild.Tests
+
     - name: Set NuGet Package Version Environment Variable from tag (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
       env:
