@@ -25,7 +25,7 @@
         public ITaskItem ProjectFile { get; set; }
 
         [Required]
-        public string ConfigFilePath { get; set; }
+        public string ConfigFilePaths { get; set; }
 
         public string LaunchDebugger { get; set; }
 
@@ -39,7 +39,8 @@
             bool success = true;
             try
             {
-                var configLoader = new XmlConfigurationLoader(ConfigFilePath);
+                var configFilePath = ConfigFilePathsParser.Parse(ConfigFilePaths);
+                var configLoader = new XmlConfigurationLoader(configFilePath);
                 var config = configLoader.Load();
 
                 var projectReferences = GetProjectReferencesFromCsproj();
