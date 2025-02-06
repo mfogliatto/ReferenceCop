@@ -36,15 +36,15 @@ jobs:
       working-directory: src/ReferenceCop.MSBuild.Tests
 
     - name: Set NuGet Package Version Environment Variable from tag (only for tagged builds)
-      if: ${{ github.ref_type == 'tag' }}
-      run: echo "PKGVERSION=${{ github.ref_name#'v' }}" >> $env:GITHUB_ENV
+      if: ${{ github.ref_type == 'tag' }} && startsWith(github.ref_name, 'v')
+      run: echo "PKGVERSION=${{ github.ref_name#v }}" >> $env:GITHUB_ENV
 
     - name: Display NuGet Package Version Environment Variable (only for tagged builds)
-      if: ${{ github.ref_type == 'tag' }}
+      if: ${{ github.ref_type == 'tag' }} && startsWith(github.ref_name, 'v')
       run: echo "version $env:PKGVERSION"
 
     - name: Publish NuGet Package (only for tagged builds)
-      if: ${{ github.ref_type == 'tag' }}
+      if: ${{ github.ref_type == 'tag' }} && startsWith(github.ref_name, 'v')
       run: |
         dotnet pack --configuration Release --no-build --output nupkgs /p:PackageVersion=$env:PKGVERSION
         dotnet nuget push **/nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
