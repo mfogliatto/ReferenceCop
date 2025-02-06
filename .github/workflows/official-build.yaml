@@ -37,7 +37,7 @@ jobs:
 
     - name: Set NuGet Package Version Environment Variable from tag (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
-      run: echo "PKGVERSION=${{ github.ref_name }}" >> $env:GITHUB_ENV
+      run: echo "PKGVERSION=${{ github.ref_name#'v' }}" >> $env:GITHUB_ENV
 
     - name: Display NuGet Package Version Environment Variable (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
