@@ -14,7 +14,7 @@ jobs:
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
-        
+
     - name: Restore dependencies in ReferenceCop.Package
       run: dotnet restore
       working-directory: src/ReferenceCop.Package
@@ -37,9 +37,7 @@ jobs:
 
     - name: Set NuGet Package Version Environment Variable from tag (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
-      env:
-         TAG: ${{ github.ref_name }}
-      run: echo "PKGVERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+      run: echo "PKGVERSION=${{ github.ref_name }}" >> $env:GITHUB_ENV
 
     - name: Display NuGet Package Version Environment Variable (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
