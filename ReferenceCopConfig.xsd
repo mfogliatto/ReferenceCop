@@ -5,40 +5,40 @@
       <xs:sequence>
         <xs:element name="Rules">
           <xs:complexType>
-            <xs:sequence>
-              <xs:element name="AssemblyName" maxOccurs="unbounded">
+            <xs:choice maxOccurs="unbounded">
+              <xs:element name="AssemblyName">
                 <xs:complexType>
-                  <xs:sequence>
+                  <xs:all>
                     <xs:element name="Name" type="xs:string" />
                     <xs:element name="Description" type="xs:string" />
                     <xs:element name="Severity" type="xs:string" />
                     <xs:element name="Pattern" type="xs:string" />
-                  </xs:sequence>
+                  </xs:all>
                 </xs:complexType>
               </xs:element>
-              <xs:element name="ProjectTag" maxOccurs="unbounded">
+              <xs:element name="ProjectTag">
                 <xs:complexType>
-                  <xs:sequence>
+                  <xs:all>
                     <xs:element name="Name" type="xs:string" />
                     <xs:element name="Description" type="xs:string" />
                     <xs:element name="Severity" type="xs:string" />
                     <xs:element name="FromProjectTag" type="xs:string" />
                     <xs:element name="ToProjectTag" type="xs:string" />
-                  </xs:sequence>
+                  </xs:all>
                 </xs:complexType>
               </xs:element>
-              <xs:element name="ProjectPath" maxOccurs="unbounded">
+              <xs:element name="ProjectPath">
                 <xs:complexType>
-                  <xs:sequence>
+                  <xs:all>
                     <xs:element name="Name" type="xs:string" />
                     <xs:element name="Description" type="xs:string" />
                     <xs:element name="Severity" type="xs:string" />
                     <xs:element name="FromPath" type="xs:string" />
                     <xs:element name="ToPath" type="xs:string" />
-                  </xs:sequence>
+                  </xs:all>
                 </xs:complexType>
               </xs:element>
-            </xs:sequence>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
