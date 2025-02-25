@@ -87,9 +87,9 @@ Here is an example of a `ReferenceCop.config` file:
             <Pattern>X</Pattern>
         </AssemblyName>
         <AssemblyName>
-			<Name>TryToAvoidLibraryX</Name>
-			<Description>Consider using Y instead of X</Description>
-			<Severity>Warning</Severity>
+	    <Name>TryToAvoidLibraryX</Name>
+	    <Description>Consider using Y instead of X</Description>
+	    <Severity>Warning</Severity>
             <Pattern>X</Pattern>
         </AssemblyName>
         <ProjectTag>
