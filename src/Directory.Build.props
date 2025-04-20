@@ -19,7 +19,13 @@
   </PropertyGroup>
   
   <!-- ReferenceCop Package DogFood Consumption Settings Section -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <!-- Since working dir is set to src/ReferenceCop.Package/ in CI workflow -->
+    <AdditionalFiles Include="$(MSBuildStartupDirectory)/../ReferenceCop.config">
+      <Label>ReferenceCopConfig</Label>
+    </AdditionalFiles>
+  </ItemGroup>
+  <ItemGroup Condition="'$(GITHUB_ACTIONS)' == 'false'">
     <AdditionalFiles Include="$(MSBuildStartupDirectory)/ReferenceCop.config">
       <Label>ReferenceCopConfig</Label>
     </AdditionalFiles>
