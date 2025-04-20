@@ -46,6 +46,6 @@ jobs:
     - name: Publish NuGet Package (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
       run: |
-        dotnet pack --configuration Release --no-build --output nupkgs /p:PackageVersion=$env:PKGVERSION
+        dotnet pack --configuration Release --no-build --output nupkgs /p:PackageVersion=$env:PKGVERSION /p:PackageId=ReferenceCop
         dotnet nuget push **/nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
       working-directory: src/ReferenceCop.Package
