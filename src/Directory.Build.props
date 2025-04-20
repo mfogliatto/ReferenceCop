@@ -27,13 +27,4 @@
   <PropertyGroup>
     <ReferenceCopRepositoryRoot>$(MSBuildStartupDirectory)</ReferenceCopRepositoryRoot>
   </PropertyGroup>
-  <!-- ReferenceCop Package Circular Dependency Prevention -->
-  <ItemGroup Condition=" '$(ExcludeReferenceCopPackageReference)' != 'true' ">
-    <PackageReference Include="ReferenceCop" PrivateAssets="All" />
-  </ItemGroup>
-
-  <!-- Temporary full exclusion of ReferenceCop package until circular dependency issue is resolved. -->
-  <PropertyGroup>
-    <ExcludeReferenceCopPackageReference>true</ExcludeReferenceCopPackageReference>
-  </PropertyGroup>
 </Project>
