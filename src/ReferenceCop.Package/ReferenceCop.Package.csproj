@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>ReferenceCop</PackageId>
+    <!-- PackageId is set during the publishing step in the CI workflow (official-build.yaml) -->
+    <!-- This is to avoid the circular dependency between the dogfood package and the package project -->
     <Authors>Marco Fogliatto</Authors>
     <PackageLicenseUrl>https://github.com/mfogliatto/ReferenceCop/blob/main/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/mfogliatto/ReferenceCop</RepositoryUrl>
