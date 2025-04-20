@@ -17,4 +17,17 @@
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
+  
+  <!-- ReferenceCop Settings: Configuration File Section -->
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)/ReferenceCop.config">
+      <Label>ReferenceCopConfig</Label>
+    </AdditionalFiles>
+  </ItemGroup>
+  
+  <!-- ReferenceCop Settings: Repository Root Section -->
+  <!-- Ensure .src/ReferenceCop (the directory where this file is) is used as the root directory -->
+  <PropertyGroup>
+    <ReferenceCopRepositoryRoot>$(MSBuildThisFileDirectory)</ReferenceCopRepositoryRoot>
+  </PropertyGroup>
 </Project>

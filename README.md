@@ -31,13 +31,13 @@ the add the respective `ReferenceCopConfig` Label node:
 </ItemGroup>
 ```
 
-3. Define the `ReferenceCopRepositoryRoot` property. This is used to define the root of the repository where the project is located. 
-This is used to resolve the paths of the project references. The recommended value for `ReferenceCopRepositoryRoot` is `$(MSBuildStartupDirectory)` 
-as this will typically be the root of the solution where the project is located. If this does not work for your project, you can set the value to a different path.
-
+3. Define the `ReferenceCopRepositoryRoot` property. This property defines the root of the repository where the projects are located
+and is used to resolve the paths of project references.
+The recommended way to set `ReferenceCopRepositoryRoot` is to define it in a Directory.Build.props file placed at the root of your repository:
+ 
 ```
 <PropertyGroup>
-    <ReferenceCopRepositoryRoot>$(MSBuildStartupDirectory)</ReferenceCopRepositoryRoot>
+    <ReferenceCopRepositoryRoot>$(MSBuildThisFileDirectory)</ReferenceCopRepositoryRoot>
 </PropertyGroup>
 ```
 
