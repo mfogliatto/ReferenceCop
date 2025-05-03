@@ -44,11 +44,13 @@
                 var config = configLoader.Load();
 
                 var projectReferences = GetProjectReferencesFromCsproj();
-
                 this.tagViolationDetector = new ProjectTagViolationDetector(config, ProjectFile.ItemSpec, new ProjectTagProvider());
                 foreach (var violation in this.tagViolationDetector.GetViolationsFrom(projectReferences))
                 {
-                    success = false;
+                    if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
+                    {
+                        success = false;
+                    }
                     BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
                 }
 
@@ -56,7 +58,10 @@
                 this.pathViolationDetector = new ProjectPathViolationDetector(config, ProjectFile.ItemSpec, new ProjectPathProvider(repositoryRoot));
                 foreach (var violation in this.pathViolationDetector.GetViolationsFrom(projectReferences))
                 {
-                    success = false;
+                    if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
+                    {
+                        success = false;
+                    }
                     BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
                 }
             }
