@@ -146,3 +146,6 @@ L10N.Integrations/phantom*
 
 # CAKE
 tools/
+
+# VS Code settings
+.vscode/mcp.json

@@ -13,13 +13,30 @@
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary",
-                "${workspaceFolder}/src"
+                "${fileDirname}"
             ],
             "group": "build",
             "presentation": {
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "pack",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "pack",
+                "${fileDirname}",
+                "--configuration",
+                "Debug",
+                "/property:GenerateFullPaths=true"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": []
         }
     ]
 }
