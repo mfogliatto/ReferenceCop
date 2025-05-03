@@ -1,22 +1,18 @@
 ﻿namespace ReferenceCop.MSBuild
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Linq;
-    using Microsoft.Build.Evaluation;
-    using Microsoft.Build.Execution;
     using Microsoft.Build.Framework;
-    using Microsoft.Build.Logging;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
     public class ReferenceCopTask : ITask
     {
-        private const string ResolveProjectReferencesTarget = "ResolveProjectReferences";
-        private const string MSBuildSourceProjectFileMetadataKey = "MSBuildSourceProjectFile";
         private const string ReferenceCopRepositoryRootProperty = "ReferenceCopRepositoryRoot";
-        private const string ProjectReferenceNode = "ProjectReference";
         private const string MSBuildDebuggerTriggerValue = "MSBuild";
+
+        private readonly IProjectMetadataProvider projectReferencesProvider;
+        private readonly Func<string, IConfigurationLoader> configLoaderFactory;
+        private readonly Func<ReferenceCopConfig, string, IViolationDetector<string>> tagViolationDetectorFactory;
+        private readonly Func<ReferenceCopConfig, string, string, IViolationDetector<string>> pathViolationDetectorFactory;
 
         public IBuildEngine BuildEngine { get; set; }
         public ITaskHost HostObject { get; set; }
@@ -29,8 +25,37 @@
 
         public string LaunchDebugger { get; set; }
 
-        private IViolationDetector<string> tagViolationDetector;
-        private IViolationDetector<string> pathViolationDetector;
+        /// <summary>
+        /// The constructor for the ReferenceCopTask used by MSBuild.
+        /// </summary>
+        public ReferenceCopTask()
+            : this(new MSBuildProjectMetadataProvider(), null, null, null)
+        {
+        }
+
+        /// <summary>
+        /// The constructor for the ReferenceCopTask used in unit tests.
+        /// </summary>
+        /// <param name="projectReferencesProvider"></param>
+        /// <param name="configLoader"></param>
+        /// <param name="tagViolationDetector"></param>
+        /// <param name="pathViolationDetector"></param>
+        public ReferenceCopTask(
+            IProjectMetadataProvider projectReferencesProvider,
+            IConfigurationLoader configLoader,
+            IViolationDetector<string> tagViolationDetector,
+            IViolationDetector<string> pathViolationDetector)
+        {
+            this.projectReferencesProvider = projectReferencesProvider;
+
+            this.configLoaderFactory = (configFilePaths) => configLoader ?? new XmlConfigurationLoader(configFilePaths);
+
+            this.tagViolationDetectorFactory = (config, projectPath) =>
+                tagViolationDetector ?? new ProjectTagViolationDetector(config, projectPath, new ProjectTagProvider());
+
+            this.pathViolationDetectorFactory = (config, projectPath, repositoryRoot) =>
+                pathViolationDetector ?? new ProjectPathViolationDetector(config, projectPath, new ProjectPathProvider(repositoryRoot));
+        }
 
         public bool Execute()
         {
@@ -40,12 +65,13 @@
             try
             {
                 var configFilePath = ConfigFilePathsParser.Parse(ConfigFilePaths);
-                var configLoader = new XmlConfigurationLoader(configFilePath);
+                var configLoader = this.configLoaderFactory(configFilePath);
                 var config = configLoader.Load();
+                
+                var projectReferences = this.projectReferencesProvider.GetProjectReferences(ProjectFile.ItemSpec);
 
-                var projectReferences = GetProjectReferencesFromCsproj();
-                this.tagViolationDetector = new ProjectTagViolationDetector(config, ProjectFile.ItemSpec, new ProjectTagProvider());
-                foreach (var violation in this.tagViolationDetector.GetViolationsFrom(projectReferences))
+                var projectTagViolationDetector = this.tagViolationDetectorFactory(config, ProjectFile.ItemSpec);
+                foreach (var violation in projectTagViolationDetector.GetViolationsFrom(projectReferences))
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
                     {
@@ -54,9 +80,10 @@
                     BuildEngine.LogViolation(violation, ProjectFile.ItemSpec);
                 }
 
-                var repositoryRoot = GetResolvedPropertyValue(ReferenceCopRepositoryRootProperty);
-                this.pathViolationDetector = new ProjectPathViolationDetector(config, ProjectFile.ItemSpec, new ProjectPathProvider(repositoryRoot));
-                foreach (var violation in this.pathViolationDetector.GetViolationsFrom(projectReferences))
+                var repositoryRoot = this.projectReferencesProvider.GetPropertyValue(
+                    ProjectFile.ItemSpec, ReferenceCopRepositoryRootProperty);
+                var projectPathViolationDetector = this.pathViolationDetectorFactory(config, ProjectFile.ItemSpec, repositoryRoot);
+                foreach (var violation in projectPathViolationDetector.GetViolationsFrom(projectReferences))
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
                     {
@@ -72,59 +99,6 @@
             }
 
             return success;
-        }
-
-        /// <summary>
-        /// Gets the project references using MSBuild.
-        /// </summary>
-        /// <remarks>The returned collection includes transitive ProjectReferences. Currently unused, only kept for historical purposes.</remarks>
-        /// <returns>The collection of ProjectReferences.</returns>
-        private IEnumerable<string> GetProjectReferencesFromBuild()
-        {
-            var projectCollection = new ProjectCollection();
-            var project = projectCollection.LoadProject(ProjectFile.ItemSpec);
-
-            var buildRequestData = new BuildRequestData(project.CreateProjectInstance(), new[] { ResolveProjectReferencesTarget });
-            var buildParameters = new BuildParameters(projectCollection)
-            {
-                Loggers = new[] { new ConsoleLogger(LoggerVerbosity.Minimal) }
-            };
-
-            var buildResult = BuildManager.DefaultBuildManager.Build(buildParameters, buildRequestData);
-
-            if (buildResult.OverallResult == BuildResultCode.Success)
-            {
-                var resolvedReferences = buildResult.ResultsByTarget[ResolveProjectReferencesTarget].Items;
-                return resolvedReferences.Select(item => item.GetMetadata(MSBuildSourceProjectFileMetadataKey));
-            }
-
-            return Enumerable.Empty<string>();
-        }
-
-        /// <summary>
-        /// Gets the project references from the .csproj file.
-        /// </summary>
-        /// <remarks>The returned collection includes only direct ProjectReferences.</remarks>
-        /// <returns>The collection of ProjectReferences.</returns>
-        private List<string> GetProjectReferencesFromCsproj()
-        {
-            var projectCollection = new ProjectCollection();
-            var project = projectCollection.LoadProject(ProjectFile.ItemSpec);
-
-            // Get all ProjectReference items. These are the direct project references.
-            var projectReferences = project.GetItems(ProjectReferenceNode);
-
-            // Extract the Include attribute, which contains the path to the referenced project.
-            return projectReferences.Select(pr => pr.EvaluatedInclude).ToList();
-        }
-
-        private string GetResolvedPropertyValue(string propertyName)
-        {
-            var projectCollection = new ProjectCollection();
-            var project = projectCollection.LoadProject(ProjectFile.ItemSpec);
-            project.ReevaluateIfNecessary();
-
-            return project.GetPropertyValue(propertyName);
         }
 
         private void LaunchDebuggerIfRequested()
