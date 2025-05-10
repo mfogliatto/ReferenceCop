@@ -16,7 +16,7 @@
                 Name = "DoNotUse-" + pattern,
                 Description = $"Use of {pattern} is forbidden. Please use Y instead",
                 Severity = ReferenceCopConfig.Rule.ViolationSeverity.Error,
-                Pattern = pattern
+                Pattern = pattern,
             });
 
             return this;

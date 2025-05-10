@@ -1,9 +1,9 @@
 ﻿namespace ReferenceCop.Tests
 {
+    using System.Xml;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Xml;
 
     [TestClass]
     public class XmlConfigurationLoaderTests

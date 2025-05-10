@@ -2,7 +2,7 @@
 {
     public static class ViolationMessageTemplates
     {
-        public const string IllegalReference = 
+        public const string IllegalReference =
             "Illegal reference '{0}' must be removed, as its usage is forbidden by rule '{1}': {2}";
 
         public const string DiscouragedReference =

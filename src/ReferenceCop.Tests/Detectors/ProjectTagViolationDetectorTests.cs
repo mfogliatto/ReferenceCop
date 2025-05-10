@@ -37,7 +37,7 @@
             // Arrange.
             var config = new ReferenceCopConfig
             {
-                Rules = new List<ReferenceCopConfig.Rule>()
+                Rules = new List<ReferenceCopConfig.Rule>(),
             };
             var detector = new ProjectTagViolationDetector(config, SourceFilePath, Substitute.For<IProjectTagProvider>());
 
@@ -57,8 +57,8 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.ProjectTag { FromProjectTag = nonMatchingTag, ToProjectTag = ProjectTag2 }
-                            }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = nonMatchingTag, ToProjectTag = ProjectTag2 },
+                            },
             };
             var tagProvider = Substitute.For<IProjectTagProvider>();
             tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
@@ -80,8 +80,8 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 }
-                            }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 },
+                            },
             };
             var tagProvider = Substitute.For<IProjectTagProvider>();
             tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
@@ -105,8 +105,8 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 }
-                            }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 },
+                            },
             };
             var tagProvider = Substitute.For<IProjectTagProvider>();
             tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
@@ -129,8 +129,8 @@
             {
                 Rules = new List<ReferenceCopConfig.Rule>
                             {
-                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 }
-                            }
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 },
+                            },
             };
             var tagProvider = Substitute.For<IProjectTagProvider>();
             tagProvider.GetProjectTag(SourceFilePath).Returns(UnknownProjectTag);
@@ -149,7 +149,7 @@
             // Arrange.
             var config = new ReferenceCopConfig
             {
-                Rules = new List<ReferenceCopConfig.Rule>()
+                Rules = new List<ReferenceCopConfig.Rule>(),
             };
             var tagProvider = Substitute.For<IProjectTagProvider>();
             tagProvider.When(x => x.GetProjectTag(Arg.Any<string>())).Do(x => { throw new InvalidOperationException(); });

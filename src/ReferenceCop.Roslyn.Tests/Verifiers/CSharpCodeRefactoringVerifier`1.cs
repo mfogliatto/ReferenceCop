@@ -1,10 +1,10 @@
-﻿using Microsoft.CodeAnalysis.CodeRefactorings;
-using Microsoft.CodeAnalysis.Testing;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace ReferenceCop.Test
+﻿namespace ReferenceCop.Test
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeRefactorings;
+    using Microsoft.CodeAnalysis.Testing;
+
     public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
         where TCodeRefactoring : CodeRefactoringProvider, new()
     {
