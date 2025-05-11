@@ -20,7 +20,7 @@
         /// <summary>
         /// Gets the relative path of the project file path from the repository root.
         /// </summary>
-        /// <exception cref="ArgumentNullException">parameter projectFilePath is null.</exception>
+        /// <exception cref="ArgumentNullException">string.</exception>
         public string GetRelativePath(string projectFilePath)
         {
             if (projectFilePath == null)
