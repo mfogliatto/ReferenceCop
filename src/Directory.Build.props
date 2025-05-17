@@ -30,4 +30,9 @@
   <PropertyGroup>
     <ReferenceCopRepositoryRoot>$(MSBuildThisFileDirectory)</ReferenceCopRepositoryRoot>
   </PropertyGroup>
+
+  <!-- Define IsDevEnvironment for local development -->
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
+    <IsDevEnvironment>true</IsDevEnvironment>
+  </PropertyGroup>
 </Project>

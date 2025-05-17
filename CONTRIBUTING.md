@@ -1,6 +1,6 @@
 # Contributing to ReferenceCop
 
-Thanks for checking out the project! We're just getting  herestarted, so any help will be appreciated. Here's a quick guide on how you can contribute:
+Thanks for checking out the project! We're just getting started, so any help will be appreciated. Here's a quick guide on how you can contribute:
 
 ## Got a bug or idea?
 

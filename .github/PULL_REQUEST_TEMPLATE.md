@@ -2,10 +2,9 @@
 [Provide a brief description of the changes in this PR]
 
 ## Type of change
+- [ ] Enhancement (e.g. new feature, functional improvement, etc.)
 - [ ] Bug fix
-- [ ] New feature
-- [ ] Enhancement
-- [ ] Breaking change
+- [ ] Chore (e.g. refactoring, documentation, etc.)
 
 ## Related Issue
 [Link to the related issue, if applicable]
