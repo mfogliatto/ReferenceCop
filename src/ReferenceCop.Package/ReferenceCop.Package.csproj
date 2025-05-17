@@ -9,9 +9,10 @@
 
   <!-- Set an alternative PackageId and PackageVersion for local dev builds -->
   <!-- Official PackageId is set during the publishing step in the CI workflow (official-build.yaml) -->
-  <!-- This is to avoid the circular dependency between the dogfood package and the package project -->
+  <!-- This is to avoid the circular dependency between the dogfood package and the package project, and facilitate local debugging. -->
   <PropertyGroup Condition="'$(IsDevEnvironment)' == 'true'">
     <PackageId>ReferenceCop.Dev</PackageId>
+    <PackageVersion>$([System.DateTime]::Now.ToString("yyyyMMdd")).$([System.DateTime]::Now.ToString("hhmmss"))</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup>
