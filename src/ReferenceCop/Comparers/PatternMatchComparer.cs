@@ -8,6 +8,11 @@
         private const string DefaultPattern = "*";
         private const char Wildcard = '*';
 
+        public int GetHashCode(string obj)
+        {
+            return obj.GetHashCode();
+        }
+
         public bool Equals(string x, string y)
         {
             if (x == DefaultPattern || y == DefaultPattern)
@@ -49,11 +54,6 @@
         {
             var suffix = first.Substring(1, first.Length - 1);
             return second.EndsWith(suffix, StringComparison.InvariantCulture);
-        }
-
-        public int GetHashCode(string obj)
-        {
-            return obj.GetHashCode();
         }
     }
 }

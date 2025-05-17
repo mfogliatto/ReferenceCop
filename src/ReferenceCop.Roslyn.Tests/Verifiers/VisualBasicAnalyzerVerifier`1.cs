@@ -1,13 +1,13 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
-using Microsoft.CodeAnalysis.VisualBasic.Testing;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace ReferenceCop.Test
+﻿namespace ReferenceCop.Test
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Testing.Verifiers;
+    using Microsoft.CodeAnalysis.VisualBasic.Testing;
+
     public static partial class VisualBasicAnalyzerVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
     {

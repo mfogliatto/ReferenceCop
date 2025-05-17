@@ -1,21 +1,19 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace ReferenceCop
+﻿namespace ReferenceCop
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ReferenceCopCodeFixProvider)), Shared]
+    using System.Collections.Immutable;
+    using System.Composition;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Rename;
+
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ReferenceCopCodeFixProvider))]
+    [Shared]
     public class ReferenceCopCodeFixProvider : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
@@ -44,7 +42,7 @@ namespace ReferenceCop
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: CodeFixResources.CodeFixTitle,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
+                    createChangedSolution: c => this.MakeUppercaseAsync(context.Document, declaration, c),
                     equivalenceKey: nameof(CodeFixResources.CodeFixTitle)),
                 diagnostic);
         }

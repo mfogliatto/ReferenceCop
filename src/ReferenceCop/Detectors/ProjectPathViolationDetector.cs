@@ -19,15 +19,15 @@
 
         public IEnumerable<Violation> GetViolationsFrom(IEnumerable<string> references)
         {
-            var fromProjectPath = projectPathProvider.GetRelativePath(projectFilePath);
+            var fromProjectPath = this.projectPathProvider.GetRelativePath(this.projectFilePath);
 
-            foreach (var rule in rules)
+            foreach (var rule in this.rules)
             {
                 if (fromProjectPath.StartsWith(rule.FromPath))
                 {
                     foreach (var reference in references)
                     {
-                        var toProjectPath = projectPathProvider.GetRelativePath(reference);
+                        var toProjectPath = this.projectPathProvider.GetRelativePath(reference);
 
                         if (toProjectPath.StartsWith(rule.ToPath))
                         {

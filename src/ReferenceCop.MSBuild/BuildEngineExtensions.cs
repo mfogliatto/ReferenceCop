@@ -17,6 +17,7 @@
                         self.LogErrorEvent(errorEvent);
                         break;
                     }
+
                 case ReferenceCopConfig.Rule.ViolationSeverity.Warning:
                     {
                         var warningEvent = CreateWarningEventFor(violation, file);

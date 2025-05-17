@@ -1,9 +1,9 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Testing;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
-
-namespace ReferenceCop.Test
+﻿namespace ReferenceCop.Test
 {
+    using Microsoft.CodeAnalysis.CSharp.Testing;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing.Verifiers;
+
     public static partial class CSharpAnalyzerVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
     {
@@ -11,7 +11,7 @@ namespace ReferenceCop.Test
         {
             public Test()
             {
-                SolutionTransforms.Add((solution, projectId) =>
+                this.SolutionTransforms.Add((solution, projectId) =>
                 {
                     var compilationOptions = solution.GetProject(projectId).CompilationOptions;
                     compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(

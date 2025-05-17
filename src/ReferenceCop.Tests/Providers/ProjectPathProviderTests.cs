@@ -15,7 +15,6 @@
 
             // Act.
             Action act = () => new ProjectPathProvider(nullRepositoryRoot);
-            
 
             // Assert.
             act.Should().Throw<ArgumentNullException>().WithMessage("*repositoryRoot*");
