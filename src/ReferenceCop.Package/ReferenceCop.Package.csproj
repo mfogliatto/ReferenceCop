@@ -7,9 +7,15 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <!-- Set an alternative PackageId and PackageVersion for local dev builds -->
+  <!-- Official PackageId is set during the publishing step in the CI workflow (official-build.yaml) -->
+  <!-- This is to avoid the circular dependency between the dogfood package and the package project, and facilitate local debugging. -->
+  <PropertyGroup Condition="'$(IsDevEnvironment)' == 'true'">
+    <PackageId>ReferenceCop.Dev</PackageId>
+    <PackageVersion>$([System.DateTime]::Now.ToString("yyyyMMdd")).$([System.DateTime]::Now.ToString("hhmmss"))</PackageVersion>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <!-- PackageId is set during the publishing step in the CI workflow (official-build.yaml) -->
-    <!-- This is to avoid the circular dependency between the dogfood package and the package project -->
     <Authors>Marco Fogliatto</Authors>
     <PackageLicenseUrl>https://github.com/mfogliatto/ReferenceCop/blob/main/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/mfogliatto/ReferenceCop</RepositoryUrl>
@@ -48,7 +54,7 @@
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.dll" PackagePath="build" />
       <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.MSBuild.dll" PackagePath="build" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.targets" PackagePath="build" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\ReferenceCop.targets" PackagePath="build/$(PackageId).targets"  />
     </ItemGroup>
   </Target>
 
