@@ -11,7 +11,7 @@ namespace ReferenceCop.MSBuild.Tests
         private const string TestPropertyName = "TestProperty";
         private const string TestPropertyValue = "TestValue";
         private const string TestReference = "TestReference.csproj";
-        
+
         private MSBuildProjectMetadataProvider provider;
 
         [TestInitialize]
@@ -19,22 +19,22 @@ namespace ReferenceCop.MSBuild.Tests
         {
             // Arrange the provider for each test
             this.provider = new MSBuildProjectMetadataProvider();
-            
+
             // Clean up any projects that might have been loaded in previous tests
             ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
         }
-        
+
         [TestMethod]
         public void GetProjectReferences_WhenProjectHasOneReference_ReturnsSingleReference()
         {
             // Arrange.
-            string tempProjectPath = CreateTempProjectFileWithReferences();
-            
+            string tempProjectPath = this.CreateTempProjectFileWithReferences();
+
             try
             {
                 // Act.
                 var references = this.provider.GetProjectReferences(tempProjectPath);
-                
+
                 // Assert.
                 references.Should().NotBeNull().And.ContainSingle(r => r == TestReference);
             }
@@ -44,18 +44,18 @@ namespace ReferenceCop.MSBuild.Tests
                 File.Delete(tempProjectPath);
             }
         }
-        
+
         [TestMethod]
         public void GetPropertyValue_WhenPropertyExists_ReturnsPropertyValue()
         {
             // Arrange.
-            string tempProjectPath = CreateTempProjectFileWithProperty();
-            
+            string tempProjectPath = this.CreateTempProjectFileWithProperty();
+
             try
             {
                 // Act.
                 string value = this.provider.GetPropertyValue(tempProjectPath, TestPropertyName);
-                
+
                 // Assert.
                 value.Should().Be(TestPropertyValue);
             }
@@ -65,19 +65,19 @@ namespace ReferenceCop.MSBuild.Tests
                 File.Delete(tempProjectPath);
             }
         }
-        
+
         [TestMethod]
         public void GetPropertyValue_WhenPropertyDoesNotExist_ReturnsEmptyString()
         {
             // Arrange.
-            string tempProjectPath = CreateTempProjectFileWithProperty();
+            string tempProjectPath = this.CreateTempProjectFileWithProperty();
             const string nonExistentProperty = "NonExistentProperty";
-            
+
             try
             {
                 // Act.
                 string value = this.provider.GetPropertyValue(tempProjectPath, nonExistentProperty);
-                
+
                 // Assert.
                 value.Should().BeEmpty();
             }
@@ -87,7 +87,7 @@ namespace ReferenceCop.MSBuild.Tests
                 File.Delete(tempProjectPath);
             }
         }
-        
+
         private string CreateTempProjectFileWithReferences()
         {
             string tempFile = Path.GetTempFileName() + ".csproj";
@@ -103,7 +103,7 @@ namespace ReferenceCop.MSBuild.Tests
             File.WriteAllText(tempFile, projectContent);
             return tempFile;
         }
-        
+
         private string CreateTempProjectFileWithProperty()
         {
             string tempFile = Path.GetTempFileName() + ".csproj";
