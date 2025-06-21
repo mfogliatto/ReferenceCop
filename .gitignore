@@ -149,6 +149,3 @@ tools/
 
 # VS Code settings
 .vscode/mcp.json
-
-# LLM Instruction files.
-claude.md
