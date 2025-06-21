@@ -8,15 +8,15 @@
     [XmlRoot]
     public class ReferenceCopConfig
     {
-        [XmlArrayItem(typeof(AssemblyName))]
-        [XmlArrayItem(typeof(ProjectTag))]
-        [XmlArrayItem(typeof(ProjectPath))]
-        public List<Rule> Rules { get; set; }
-
         public ReferenceCopConfig()
         {
             this.Rules = new List<Rule>();
         }
+
+        [XmlArrayItem(typeof(AssemblyName))]
+        [XmlArrayItem(typeof(ProjectTag))]
+        [XmlArrayItem(typeof(ProjectPath))]
+        public List<Rule> Rules { get; set; }
 
         [Serializable]
         [XmlInclude(typeof(AssemblyName))]
@@ -24,19 +24,21 @@
         [XmlInclude(typeof(ProjectPath))]
         public abstract class Rule
         {
-            [XmlElement]
-            public string Name { get; set; }
-            [XmlElement]
-            public string Description { get; set; }
-            [XmlElement]
-            public ViolationSeverity Severity { get; set; }
-
             public enum ViolationSeverity
             {
                 None,
                 Error,
-                Warning
+                Warning,
             }
+
+            [XmlElement]
+            public string Name { get; set; }
+
+            [XmlElement]
+            public string Description { get; set; }
+
+            [XmlElement]
+            public ViolationSeverity Severity { get; set; }
         }
 
         [Serializable]
@@ -49,6 +51,7 @@
         public class ProjectTag : Rule
         {
             public string FromProjectTag { get; set; }
+
             public string ToProjectTag { get; set; }
         }
 
@@ -56,6 +59,7 @@
         public class ProjectPath : Rule
         {
             public string FromPath { get; set; }
+
             public string ToPath { get; set; }
         }
     }

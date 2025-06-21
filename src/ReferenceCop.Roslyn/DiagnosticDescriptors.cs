@@ -4,8 +4,6 @@
 
     internal class DiagnosticDescriptors
     {
-        private const string Category = "ReferenceCop";
-
         public static readonly DiagnosticDescriptor GeneralError = new DiagnosticDescriptor(
             "RC0000",
             "General Error",
@@ -29,5 +27,7 @@
             Category,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
+
+        private const string Category = "ReferenceCop";
     }
 }

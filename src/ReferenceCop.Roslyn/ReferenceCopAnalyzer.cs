@@ -9,15 +9,15 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ReferenceCopAnalyzer : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
-            DiagnosticDescriptors.GeneralError,
-            DiagnosticDescriptors.IllegalReferenceRule,
-            DiagnosticDescriptors.DiscouragedReferenceRule);
-
         private const string LaunchDebuggerKey = "build_property.LaunchDebugger";
         private const string RoslynDebuggerTriggerValue = "Roslyn";
 
         private IViolationDetector<AssemblyIdentity> detector;
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+        DiagnosticDescriptors.GeneralError,
+        DiagnosticDescriptors.IllegalReferenceRule,
+        DiagnosticDescriptors.DiscouragedReferenceRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -39,15 +39,6 @@
             });
         }
 
-        private void AnalyzeCompilation(CompilationAnalysisContext compilationAnalysisContext)
-        {
-            var compilation = compilationAnalysisContext.Compilation;
-            foreach (var violation in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
-            {
-                compilationAnalysisContext.ReportDiagnostic(DiagnosticFactory.CreateFor(violation));
-            }
-        }
-
         private static void LaunchDebuggerIfRequested(CompilationAnalysisContext compilationAnalysisContext)
         {
             var isConfigPresent = compilationAnalysisContext.Options.AnalyzerConfigOptionsProvider.GlobalOptions.TryGetValue(LaunchDebuggerKey, out var launchDebuggerValue);
@@ -55,6 +46,15 @@
             if (!Debugger.IsAttached && launchDebuggerRequested)
             {
                 Debugger.Launch();
+            }
+        }
+
+        private void AnalyzeCompilation(CompilationAnalysisContext compilationAnalysisContext)
+        {
+            var compilation = compilationAnalysisContext.Compilation;
+            foreach (var violation in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
+            {
+                compilationAnalysisContext.ReportDiagnostic(DiagnosticFactory.CreateFor(violation));
             }
         }
     }

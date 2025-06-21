@@ -19,15 +19,15 @@
 
         public IEnumerable<Violation> GetViolationsFrom(IEnumerable<string> references)
         {
-            var fromProjectTag = projectTagProvider.GetProjectTag(projectFilePath);
+            var fromProjectTag = this.projectTagProvider.GetProjectTag(this.projectFilePath);
 
-            foreach (var rule in rules)
+            foreach (var rule in this.rules)
             {
                 if (fromProjectTag == rule.FromProjectTag)
                 {
                     foreach (var reference in references)
                     {
-                        var toProjectTag = projectTagProvider.GetProjectTag(reference);
+                        var toProjectTag = this.projectTagProvider.GetProjectTag(reference);
 
                         if (toProjectTag == rule.ToProjectTag)
                         {
