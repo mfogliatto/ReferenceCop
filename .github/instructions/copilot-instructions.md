@@ -61,7 +61,9 @@ dotnet pack src/ReferenceCop.Package/ReferenceCop.Package.csproj -c Release
 - The project uses itself for validation (dogfooding)
 - Special handling in `.Package.csproj` to avoid circular references during development
 
-## Code Style Guidelines
+## Contribution Guidelines
+
+### Code Style Guidelines
 
 Please ensure all code follows StyleCop-based conventions as defined in the project's configuration file located at `src\stylecop.json`. This file defines the following important style guidelines:
 
@@ -73,7 +75,7 @@ Please ensure all code follows StyleCop-based conventions as defined in the proj
 
 When adding or modifying code, adhere to these style conventions for consistency across the project.
 
-## Testing Guidelines
+### Testing Guidelines
 
 **Unit Test Conventions:**
 
@@ -119,15 +121,28 @@ Use **MSTest** attributes:
   Instead, assign these values to variables (or constants, when appropriate) in the Arrange section, 
   and reuse those variables in the Assert section. This ensures maintainability and clarity.
 
-## Common Tasks
+### Pull Request Guidelines
 
-### Adding a New Rule Type
+When creating pull requests, always use the repository's pull request template located at `.github/PULL_REQUEST_TEMPLATE.md`. This template includes the following sections:
+
+- Description of changes
+- Type of change (Enhancement, Bug fix, Chore)
+- Related issue link
+- Testing information
+- Screenshots (if applicable)
+- Additional context
+
+Ensure all required fields in the template are filled out appropriately when creating pull requests.
+
+### Common Tasks
+
+#### Adding a New Rule Type
 1. Create rule class inheriting from `ReferenceCopConfig.Rule`
 2. Add to `XmlArrayItem` attributes in `ReferenceCopConfig`
 3. Create detector implementing `IViolationDetector<T>`
 4. Update task/analyzer to use the new detector
 
-### Modifying Rule Processing
+#### Modifying Rule Processing
 - Core detection logic in `Detectors/` namespace
 - MSBuild integration in `ReferenceCopTask.cs`
 - Roslyn integration in `ReferenceCopAnalyzer.cs`
