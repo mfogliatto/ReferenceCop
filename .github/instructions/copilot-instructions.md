@@ -11,30 +11,67 @@ ReferenceCop is a suite of tools (including a Roslyn analyzer and an MSBuild tas
 - C#
 - MSBuild tasks
 
----
-
-## Current Status
-
-- Ready for integration into .NET projects as a NuGet package.
-- Requires configuration via `ReferenceCop.config` and MSBuild properties.
-- Supports repository-wide and per-project configuration.
-- Provided with sample rules and configuration in documentation.
-- Inefficient detection algorithm in AssemblyNameViolationDetector is used.
-- Rules cannot be configured to have exceptions. Support for NoWarn is not available and needs to be implemented.
-
----
-
 ## Main Objectives
 
 1. Enforce architectural constraints by restricting certain project/package references.
 2. Make configuration simple and maintainable for large .NET codebases.
 3. Provide clear, actionable diagnostics during the build process.
 
----
+## Architecture Patterns
+
+### Component Structure
+- **Core Library**: Contains rule configuration models, violation detectors, and providers
+- **MSBuild Integration**: Provides build-time validation using the Task pattern
+- **Roslyn Integration**: Provides IDE-time validation using the DiagnosticAnalyzer pattern
+- **Package**: Aggregates components into a single distributable NuGet package
+
+### Key Abstractions
+- `IViolationDetector<T>`: Core interface for all rule validators
+- `ReferenceCopConfig`: Configuration model for rule definitions
+- `Violation`: Represents a rule violation with severity and messaging
+
+### Rule Types
+- `AssemblyName`: Validates referenced assembly names against patterns
+- `ProjectTag`: Validates project references based on project tag metadata
+- `ProjectPath`: Validates project references based on folder structure
+
+## Development Workflow
+
+### Build and Test
+```bash
+dotnet build src/ReferenceCop.sln
+dotnet test src/ReferenceCop.sln
+```
+
+### Package Creation
+```bash
+# For local development builds
+dotnet pack src/ReferenceCop.Package/ReferenceCop.Package.csproj -c Debug
+
+# For release builds
+dotnet pack src/ReferenceCop.Package/ReferenceCop.Package.csproj -c Release
+```
+
+### Debugging
+- Set `LaunchDebugger` property in MSBuild to trigger debugging:
+  - For MSBuild task: `LaunchDebugger=MSBuild`
+  - For Roslyn analyzer: `LaunchDebugger=Roslyn`
+
+## Integration Testing
+- The project uses itself for validation (dogfooding)
+- Special handling in `.Package.csproj` to avoid circular references during development
 
 ## Code Style Guidelines
 
-Please ensure all code follows StyleCop-based conventions as defined in #src\stylecop.json.
+Please ensure all code follows StyleCop-based conventions as defined in the project's configuration file located at `src\stylecop.json`. This file defines the following important style guidelines:
+
+1. **Documentation Rules**: Internal elements, private fields, and interfaces don't require documentation comments.
+2. **Ordering Rules**: 
+   - Using directives should be placed inside namespaces
+   - System using directives should be listed first
+3. **Layout Rules**: All files must end with a newline
+
+When adding or modifying code, adhere to these style conventions for consistency across the project.
 
 ## Testing Guidelines
 
@@ -81,8 +118,19 @@ Use **MSTest** attributes:
 - When arranging and asserting in tests, **avoid duplicating strings or values**.  
   Instead, assign these values to variables (or constants, when appropriate) in the Arrange section, 
   and reuse those variables in the Assert section. This ensures maintainability and clarity.
-  
----
+
+## Common Tasks
+
+### Adding a New Rule Type
+1. Create rule class inheriting from `ReferenceCopConfig.Rule`
+2. Add to `XmlArrayItem` attributes in `ReferenceCopConfig`
+3. Create detector implementing `IViolationDetector<T>`
+4. Update task/analyzer to use the new detector
+
+### Modifying Rule Processing
+- Core detection logic in `Detectors/` namespace
+- MSBuild integration in `ReferenceCopTask.cs`
+- Roslyn integration in `ReferenceCopAnalyzer.cs`
 
 ## Instructions for the AI Agent
 
@@ -91,8 +139,6 @@ Use **MSTest** attributes:
 - Add XML documentation for all public methods.
 - Write MSTest tests for all new code.
 - If you need clarification, request it in the `[ASSISTANT NOTE]` section below.
-
----
 
 ## Reference
 
@@ -104,11 +150,3 @@ Use as reference the code that is located in #src\ReferenceCop.
 - If making multiple file changes, group by file.
 - Summarize changes below each code block.
 - Ask for clarification in `[ASSISTANT NOTE]` if anything is unclear.
-
----
-
-## [ASSISTANT NOTE]
-
-(Reserved for agent to request clarification or summarize uncertainties.)
-
----
