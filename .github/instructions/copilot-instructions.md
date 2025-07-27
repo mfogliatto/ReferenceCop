@@ -71,7 +71,28 @@ Please ensure all code follows StyleCop-based conventions as defined in the proj
 2. **Ordering Rules**: 
    - Using directives should be placed inside namespaces
    - System using directives should be listed first
-3. **Layout Rules**: All files must end with a newline
+3. **Layout Rules**: 
+   - All files must end with a newline
+   - Use 4 spaces for indentation, not tabs
+   - Maintain consistent indentation when adding or modifying code blocks
+4. **File Organization**:
+   - Each type (class, interface, struct, enum) should have its own file
+   - The file name should match the type name exactly
+   - Nested types can be in the same file as their parent type
+
+5. **Whitespace Rules**:
+   - No trailing whitespace at the end of lines (SA1028)
+   - No empty lines with whitespace characters
+   - Use a single blank line to separate logical code blocks
+   - Use a single space after keywords like `if`, `for`, `while`, etc.
+   - Use a single space before opening braces
+
+6. **Indentation Guidelines**:
+   - Always preserve the existing indentation style when modifying code
+   - Match the surrounding code's indentation level precisely when adding new code
+   - Ensure that all opening and closing braces maintain proper alignment
+   - For method parameters and arguments that span multiple lines, align parameters with the first parameter
+   - Do not mix tabs and spaces for indentation
 
 When adding or modifying code, adhere to these style conventions for consistency across the project.
 
@@ -95,9 +116,8 @@ When adding or modifying code, adhere to these style conventions for consistency
    `result.Should().Be(expectedValue).Because("the discount should apply");`
 
 4. **Test Structure**:  
-   Explicitly separate test phases with comments:  
-```
-
+   Explicitly separate test phases with comments and maintain proper indentation:  
+```csharp
 // Arrange.
 var service = Substitute.For<IService>();
 
@@ -107,6 +127,11 @@ var result = sut.Calculate();
 // Assert.
 result.Should().NotBeNull();
 ```
+
+   When adding test methods, ensure that indentation is consistent with existing code:
+   - Use 4 spaces for indentation levels
+   - Align closing braces with their corresponding opening statements
+   - Maintain proper indentation for nested code blocks within test methods
 
 5. **Framework**:  
 Use **MSTest** attributes:  
@@ -147,12 +172,40 @@ Ensure all required fields in the template are filled out appropriately when cre
 - MSBuild integration in `ReferenceCopTask.cs`
 - Roslyn integration in `ReferenceCopAnalyzer.cs`
 
+### Code Generation and Modification Guidelines
+
+When adding or modifying code in the ReferenceCop project, follow these guidelines:
+
+1. **Code Addition**:
+   - Match existing indentation patterns precisely
+   - Ensure all nested blocks follow the 4-space indentation rule
+   - Maintain the same brace style as surrounding code
+
+2. **Code Modification**:
+   - Preserve the original indentation when replacing or modifying existing code
+   - When refactoring, ensure that the modified code follows the same indentation patterns
+   - Do not change indentation of surrounding, unchanged code
+
+3. **Line Wrapping**:
+   - For method signatures that span multiple lines, indent continuation lines with 4 spaces
+   - For parameter lists, align parameters with the first parameter
+   - For chained method calls, use consistent indentation for each line
+
+4. **XML Documentation**:
+   - Ensure XML doc comments maintain consistent indentation with the code they document
+   - Indent XML doc elements consistently within the comment block
+
 ## Instructions for the AI Agent
 
 - Write clean, idiomatic C# code.
 - Follow the coding standards and style described in the sections above.
 - Add XML documentation for all public methods.
 - Write MSTest tests for all new code.
+- Pay careful attention to code indentation:
+  - Maintain 4-space indentation throughout the codebase
+  - Align braces correctly according to the existing code style
+  - Ensure that code additions match the surrounding indentation exactly
+  - When generating code, verify that indentation remains consistent with existing patterns
 - If you need clarification, request it in the `[ASSISTANT NOTE]` section below.
 
 ## Reference
