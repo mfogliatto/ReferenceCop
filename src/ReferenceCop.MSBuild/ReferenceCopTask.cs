@@ -13,8 +13,8 @@
 
         private readonly IProjectMetadataProvider projectReferencesProvider;
         private readonly Func<string, IConfigurationLoader> configLoaderFactory;
-        private readonly Func<ReferenceCopConfig, string, IViolationDetector<string>> tagViolationDetectorFactory;
-        private readonly Func<ReferenceCopConfig, string, string, IViolationDetector<string>> pathViolationDetectorFactory;
+        private readonly Func<ReferenceCopConfig, string, IViolationDetector<string>> projectTagViolationDetectorFactory;
+        private readonly Func<ReferenceCopConfig, string, string, IViolationDetector<string>> projectPathViolationDetectorFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReferenceCopTask"/> class.
@@ -43,10 +43,10 @@
 
             this.configLoaderFactory = (configFilePaths) => configLoader ?? new XmlConfigurationLoader(configFilePaths);
 
-            this.tagViolationDetectorFactory = (config, projectPath) =>
+            this.projectTagViolationDetectorFactory = (config, projectPath) =>
                 tagViolationDetector ?? new ProjectTagViolationDetector(config, projectPath, new ProjectTagProvider());
 
-            this.pathViolationDetectorFactory = (config, projectPath, repositoryRoot) =>
+            this.projectPathViolationDetectorFactory = (config, projectPath, repositoryRoot) =>
                 pathViolationDetector ?? new ProjectPathViolationDetector(config, projectPath, new ProjectPathProvider(repositoryRoot));
         }
 
@@ -78,7 +78,7 @@
                     .Select(_ => ReferenceEvaluationContextFactory.Create(_.Path, _.NoWarn))
                     .ToList();
 
-                var projectTagViolationDetector = this.tagViolationDetectorFactory(config, this.ProjectFile.ItemSpec);
+                var projectTagViolationDetector = this.projectTagViolationDetectorFactory(config, this.ProjectFile.ItemSpec);
                 foreach (var violation in projectTagViolationDetector.GetViolationsFrom(evaluationContexts))
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
@@ -91,7 +91,7 @@
 
                 var repositoryRoot = this.projectReferencesProvider.GetPropertyValue(
                     this.ProjectFile.ItemSpec, ReferenceCopRepositoryRootProperty);
-                var projectPathViolationDetector = this.pathViolationDetectorFactory(config, this.ProjectFile.ItemSpec, repositoryRoot);
+                var projectPathViolationDetector = this.projectPathViolationDetectorFactory(config, this.ProjectFile.ItemSpec, repositoryRoot);
                 foreach (var violation in projectPathViolationDetector.GetViolationsFrom(evaluationContexts))
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
