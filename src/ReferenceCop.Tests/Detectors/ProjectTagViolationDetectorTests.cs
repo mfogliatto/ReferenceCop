@@ -25,7 +25,10 @@
             var detector = new ProjectTagViolationDetector(config, SourceFilePath, Substitute.For<IProjectTagProvider>());
 
             // Act.
-            var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                ReferenceEvaluationContextFactory.Create(ReferenceFilePath1),
+            });
 
             // Assert.
             result.Should().BeEmpty();
@@ -42,7 +45,7 @@
             var detector = new ProjectTagViolationDetector(config, SourceFilePath, Substitute.For<IProjectTagProvider>());
 
             // Act.
-            var result = detector.GetViolationsFrom(Enumerable.Empty<string>());
+            var result = detector.GetViolationsFrom(Enumerable.Empty<ReferenceEvaluationContext<string>>());
 
             // Assert.
             result.Should().BeEmpty();
@@ -66,7 +69,10 @@
             var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
-            var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                ReferenceEvaluationContextFactory.Create(ReferenceFilePath1),
+            });
 
             // Assert.
             result.Should().BeEmpty();
@@ -89,7 +95,10 @@
             var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
-            var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                ReferenceEvaluationContextFactory.Create(ReferenceFilePath1),
+            });
 
             // Assert.
             result.Should().ContainSingle()
@@ -115,7 +124,11 @@
             var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
-            var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1, ReferenceFilePath2 });
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                ReferenceEvaluationContextFactory.Create(ReferenceFilePath1),
+                ReferenceEvaluationContextFactory.Create(ReferenceFilePath2),
+            });
 
             // Assert.
             result.Should().HaveCount(2);
@@ -137,10 +150,72 @@
             var detector = new ProjectTagViolationDetector(config, "nonexistent.csproj", tagProvider);
 
             // Act.
-            var result = detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 });
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                ReferenceEvaluationContextFactory.Create(ReferenceFilePath1),
+            });
 
             // Assert.
             result.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GetViolationsFrom_WhenWarningSuppressed_SkipsViolation()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfig
+            {
+                Rules = new List<ReferenceCopConfig.Rule>
+                            {
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 },
+                            },
+            };
+            var tagProvider = Substitute.For<IProjectTagProvider>();
+            tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
+            tagProvider.GetProjectTag(ReferenceFilePath1).Returns(ProjectTag2);
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
+
+            // Act.
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                // Create with warning suppressed
+                new ReferenceEvaluationContext<string>(ReferenceFilePath1, isWarningSuppressed: true),
+            });
+
+            // Assert.
+            result.Should().BeEmpty("because the violation was suppressed");
+        }
+
+        [TestMethod]
+        public void GetViolationsFrom_WhenMultipleReferencesWithSomeSuppressed_ReturnsSomeViolations()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfig
+            {
+                Rules = new List<ReferenceCopConfig.Rule>
+                            {
+                                new ReferenceCopConfig.ProjectTag { FromProjectTag = ProjectTag1, ToProjectTag = ProjectTag2 },
+                            },
+            };
+            var tagProvider = Substitute.For<IProjectTagProvider>();
+            tagProvider.GetProjectTag(SourceFilePath).Returns(ProjectTag1);
+            tagProvider.GetProjectTag(ReferenceFilePath1).Returns(ProjectTag2);
+            tagProvider.GetProjectTag(ReferenceFilePath2).Returns(ProjectTag2);
+            var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
+
+            // Act.
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                // Regular reference with no suppression
+                new ReferenceEvaluationContext<string>(ReferenceFilePath1, isWarningSuppressed: false),
+
+                // Suppressed reference
+                new ReferenceEvaluationContext<string>(ReferenceFilePath2, isWarningSuppressed: true),
+            });
+
+            // Assert.
+            result.Should().ContainSingle()
+                .Which.ReferenceName.Should().Be(ReferenceFilePath1);
         }
 
         [TestMethod]
@@ -156,7 +231,10 @@
             var detector = new ProjectTagViolationDetector(config, SourceFilePath, tagProvider);
 
             // Act.
-            Action act = () => detector.GetViolationsFrom(new List<string> { ReferenceFilePath1 }).ToList();
+            Action act = () => detector.GetViolationsFrom(new List<ReferenceEvaluationContext<string>>
+            {
+                ReferenceEvaluationContextFactory.Create(ReferenceFilePath1),
+            }).ToList();
 
             // Assert.
             act.Should().Throw<InvalidOperationException>();

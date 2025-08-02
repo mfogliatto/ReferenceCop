@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Immutable;
     using System.Diagnostics;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -52,7 +53,12 @@
         private void AnalyzeCompilation(CompilationAnalysisContext compilationAnalysisContext)
         {
             var compilation = compilationAnalysisContext.Compilation;
-            foreach (var violation in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
+
+            var evaluationContexts = compilation.ReferencedAssemblyNames
+                .Select(assemblyRef => ReferenceEvaluationContextFactory.Create(assemblyRef))
+                .ToList();
+
+            foreach (var violation in this.detector.GetViolationsFrom(evaluationContexts))
             {
                 compilationAnalysisContext.ReportDiagnostic(DiagnosticFactory.CreateFor(violation));
             }

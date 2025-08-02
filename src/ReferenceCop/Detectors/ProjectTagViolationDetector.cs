@@ -17,7 +17,7 @@
             this.projectTagProvider = projectTagProvider;
         }
 
-        public IEnumerable<Violation> GetViolationsFrom(IEnumerable<string> references)
+        public IEnumerable<Violation> GetViolationsFrom(IEnumerable<ReferenceEvaluationContext<string>> references)
         {
             var fromProjectTag = this.projectTagProvider.GetProjectTag(this.projectFilePath);
 
@@ -25,13 +25,19 @@
             {
                 if (fromProjectTag == rule.FromProjectTag)
                 {
-                    foreach (var reference in references)
+                    foreach (var referenceContext in references)
                     {
-                        var toProjectTag = this.projectTagProvider.GetProjectTag(reference);
+                        var toProjectTag = this.projectTagProvider.GetProjectTag(referenceContext.Reference);
 
                         if (toProjectTag == rule.ToProjectTag)
                         {
-                            yield return new Violation(rule, reference);
+                            // Check if this warning should be suppressed
+                            if (referenceContext.IsWarningSuppressed)
+                            {
+                                continue;
+                            }
+
+                            yield return new Violation(rule, referenceContext.Reference);
                         }
                     }
                 }

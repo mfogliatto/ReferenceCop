@@ -20,7 +20,10 @@
             var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
 
             // Act.
-            var result = detector.GetViolationsFrom(new List<AssemblyIdentity> { new AssemblyIdentity("System.Xml.Linq") });
+            var result = detector.GetViolationsFrom(new List<ReferenceEvaluationContext<AssemblyIdentity>>
+            {
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Linq")),
+            });
 
             // Assert.
             result.Should().BeEmpty();
@@ -39,9 +42,9 @@
             var detector = new AssemblyNameViolationDetector(comparer, config);
             var references = new[]
             {
-                new AssemblyIdentity(detectableValue),
-                new AssemblyIdentity("System.Xml.Serialization"),
-                new AssemblyIdentity("System.Xml.Linq"),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(detectableValue)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Serialization")),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Linq")),
             };
 
             // Act
@@ -65,9 +68,9 @@
             var detector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
             var references = new[]
             {
-                new AssemblyIdentity(detectableValue1),
-                new AssemblyIdentity(detectableValue2),
-                new AssemblyIdentity("System.Text"),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(detectableValue1)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(detectableValue2)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Text")),
             };
 
             // Act
@@ -85,8 +88,8 @@
             var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
             var references = new[]
             {
-                new AssemblyIdentity("System.Xml.Serialization"),
-                new AssemblyIdentity("System.Xml.Linq"),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Serialization")),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Linq")),
             };
 
             // Act
@@ -106,10 +109,66 @@
             var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
 
             // Act
-            var diagnostics = detector.GetViolationsFrom(Array.Empty<AssemblyIdentity>());
+            var diagnostics = detector.GetViolationsFrom(Array.Empty<ReferenceEvaluationContext<AssemblyIdentity>>());
 
             // Assert
             diagnostics.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GetViolationsFrom_WhenWarningSuppressed_SkipsViolation()
+        {
+            // Arrange.
+            const string detectableValue = "System.Xml";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(detectableValue)
+                .Build();
+            var comparer = Substitute.For<IEqualityComparer<string>>();
+            comparer.Equals(detectableValue, detectableValue).Returns(true);
+            var detector = new AssemblyNameViolationDetector(comparer, config);
+            var references = new[]
+            {
+                // Create with warning suppressed
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity(detectableValue), isWarningSuppressed: true),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFrom(references);
+
+            // Assert
+            diagnostics.Should().BeEmpty("because the violation was suppressed");
+        }
+
+        [TestMethod]
+        public void GetViolationsFrom_WhenMultipleReferencesWithSomeSuppressed_ReturnsSomeViolations()
+        {
+            // Arrange.
+            const string partialMatch = "System.Xml";
+            var detectablePattern = $"{partialMatch}.*";
+            var detectableValue1 = $"{partialMatch}.Serialization";
+            var detectableValue2 = $"{partialMatch}.Linq";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(detectablePattern)
+                .Build();
+            var detector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
+            var references = new[]
+            {
+                // Regular reference with no suppression
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity(detectableValue1), isWarningSuppressed: false),
+
+                // Suppressed reference
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity(detectableValue2), isWarningSuppressed: true),
+
+                // Non-matching reference
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity("System.Text"), isWarningSuppressed: false),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFrom(references);
+
+            // Assert
+            diagnostics.Should().ContainSingle()
+                .Which.ReferenceName.Should().Be(detectableValue1);
         }
 
         [TestMethod]
@@ -120,9 +179,9 @@
                 .WithAssemblyNameRule("somePattern")
                 .Build();
             var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
-            var references = new AssemblyIdentity[]
+            var references = new ReferenceEvaluationContext<AssemblyIdentity>[]
             {
-                null,
+                ReferenceEvaluationContextFactory.Create<AssemblyIdentity>(null),
             };
 
             // Act

@@ -12,7 +12,7 @@ namespace ReferenceCop.MSBuild
         /// </summary>
         /// <param name="projectFilePath">The path to the project file.</param>
         /// <returns>The collection of project references.</returns>
-        IEnumerable<string> GetProjectReferences(string projectFilePath);
+        IEnumerable<ProjectReferenceInfo> GetProjectReferences(string projectFilePath);
 
         /// <summary>
         /// Gets a resolved property value from a project file.

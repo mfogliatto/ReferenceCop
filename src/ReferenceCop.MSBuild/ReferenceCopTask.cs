@@ -1,7 +1,9 @@
 ﻿namespace ReferenceCop.MSBuild
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using Microsoft.Build.Framework;
 
     public class ReferenceCopTask : ITask
@@ -70,10 +72,14 @@
                 var configFilePath = ConfigFilePathsParser.Parse(this.ConfigFilePaths);
                 var configLoader = this.configLoaderFactory(configFilePath);
                 var config = configLoader.Load();
+
                 var projectReferences = this.projectReferencesProvider.GetProjectReferences(this.ProjectFile.ItemSpec);
+                var evaluationContexts = projectReferences
+                    .Select(_ => ReferenceEvaluationContextFactory.Create(_.Path, _.NoWarn))
+                    .ToList();
 
                 var projectTagViolationDetector = this.tagViolationDetectorFactory(config, this.ProjectFile.ItemSpec);
-                foreach (var violation in projectTagViolationDetector.GetViolationsFrom(projectReferences))
+                foreach (var violation in projectTagViolationDetector.GetViolationsFrom(evaluationContexts))
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
                     {
@@ -86,7 +92,7 @@
                 var repositoryRoot = this.projectReferencesProvider.GetPropertyValue(
                     this.ProjectFile.ItemSpec, ReferenceCopRepositoryRootProperty);
                 var projectPathViolationDetector = this.pathViolationDetectorFactory(config, this.ProjectFile.ItemSpec, repositoryRoot);
-                foreach (var violation in projectPathViolationDetector.GetViolationsFrom(projectReferences))
+                foreach (var violation in projectPathViolationDetector.GetViolationsFrom(evaluationContexts))
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
                     {

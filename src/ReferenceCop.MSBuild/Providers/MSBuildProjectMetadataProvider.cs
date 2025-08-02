@@ -10,13 +10,14 @@ namespace ReferenceCop.MSBuild
     public class MSBuildProjectMetadataProvider : IProjectMetadataProvider
     {
         private const string ProjectReferenceNode = "ProjectReference";
+        private const string NoWarnMetadata = "NoWarn";
 
         /// <summary>
         /// Gets the project references from a project file.
         /// </summary>
         /// <param name="projectFilePath">The path to the project file.</param>
         /// <returns>The collection of project references.</returns>
-        public IEnumerable<string> GetProjectReferences(string projectFilePath)
+        public IEnumerable<ProjectReferenceInfo> GetProjectReferences(string projectFilePath)
         {
             var projectCollection = new ProjectCollection();
             var project = projectCollection.LoadProject(projectFilePath);
@@ -24,8 +25,18 @@ namespace ReferenceCop.MSBuild
             // Get all ProjectReference items. These are the direct project references.
             var projectReferences = project.GetItems(ProjectReferenceNode);
 
-            // Extract the Include attribute, which contains the path to the referenced project.
-            return projectReferences.Select(pr => pr.EvaluatedInclude);
+            // Extract the Include attribute and NoWarn metadata for each reference
+            foreach (var pr in projectReferences)
+            {
+                string referencePath = pr.EvaluatedInclude;
+                string noWarnValue = pr.GetMetadataValue(NoWarnMetadata);
+
+                IEnumerable<string> noWarnCodes = string.IsNullOrEmpty(noWarnValue)
+                    ? new List<string>()
+                    : noWarnValue.Split(',').Select(code => code.Trim());
+
+                yield return new ProjectReferenceInfo(referencePath, noWarnCodes);
+            }
         }
 
         /// <summary>

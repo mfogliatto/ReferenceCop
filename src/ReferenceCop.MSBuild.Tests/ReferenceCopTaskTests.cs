@@ -1,6 +1,7 @@
 namespace ReferenceCop.MSBuild.Tests
 {
     using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
     using Microsoft.Build.Framework;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,13 +28,13 @@ namespace ReferenceCop.MSBuild.Tests
 
             // Setup the fake IProjectMetadataProvider
             fakeProjectReferencesProvider.GetProjectReferences(Arg.Any<string>())
-                .Returns(new List<string> { "ReferenceProject.csproj" });
+                .Returns(new List<ProjectReferenceInfo> { new ProjectReferenceInfo("ReferenceProject.csproj") });
             fakeProjectReferencesProvider.GetPropertyValue(Arg.Any<string>(), Arg.Any<string>())
                 .Returns("C:\\path\\to\\repo");
 
-            tagViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<string>>())
+            tagViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<ReferenceEvaluationContext<string>>>())
                 .Returns(new List<Violation> { warningViolation });
-            pathViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<string>>())
+            pathViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<ReferenceEvaluationContext<string>>>())
                 .Returns(new List<Violation>());
 
             fakeConfigLoader.Load().Returns(new ReferenceCopConfig());
@@ -71,16 +72,16 @@ namespace ReferenceCop.MSBuild.Tests
 
             // Setup the fake IProjectReferencesProvider
             fakeProjectReferencesProvider.GetProjectReferences(Arg.Any<string>())
-                .Returns(new List<string> { "ReferenceProject.csproj" });
+                .Returns(new List<ProjectReferenceInfo> { new ProjectReferenceInfo("ReferenceProject.csproj") });
             fakeProjectReferencesProvider.GetPropertyValue(Arg.Any<string>(), Arg.Any<string>())
                 .Returns("C:\\path\\to\\repo");
 
             var rule = new ReferenceCopConfig.AssemblyName { Severity = ReferenceCopConfig.Rule.ViolationSeverity.Error };
             var errorViolation = new Violation(rule, "TestReference");
 
-            tagViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<string>>())
+            tagViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<ReferenceEvaluationContext<string>>>())
                 .Returns(new List<Violation> { errorViolation });
-            pathViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<string>>())
+            pathViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<ReferenceEvaluationContext<string>>>())
                 .Returns(new List<Violation>());
 
             fakeConfigLoader.Load().Returns(new ReferenceCopConfig());
@@ -118,7 +119,7 @@ namespace ReferenceCop.MSBuild.Tests
 
             // Setup the fake IProjectReferencesProvider
             fakeProjectReferencesProvider.GetProjectReferences(Arg.Any<string>())
-                .Returns(new List<string> { "ReferenceProject.csproj" });
+                .Returns(new List<ProjectReferenceInfo> { new ProjectReferenceInfo("ReferenceProject.csproj") });
             fakeProjectReferencesProvider.GetPropertyValue(Arg.Any<string>(), Arg.Any<string>())
                 .Returns("C:\\path\\to\\repo");
 
@@ -127,9 +128,9 @@ namespace ReferenceCop.MSBuild.Tests
             var errorViolation = new Violation(errorRule, "TestErrorReference");
             var warningViolation = new Violation(warningRule, "TestWarningReference");
 
-            tagViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<string>>())
+            tagViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<ReferenceEvaluationContext<string>>>())
                 .Returns(new List<Violation> { errorViolation });
-            pathViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<string>>())
+            pathViolationDetector.GetViolationsFrom(Arg.Any<IEnumerable<ReferenceEvaluationContext<string>>>())
                 .Returns(new List<Violation> { warningViolation });
 
             fakeConfigLoader.Load().Returns(new ReferenceCopConfig());

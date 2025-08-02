@@ -17,7 +17,7 @@
             this.projectPathProvider = projectPathProvider;
         }
 
-        public IEnumerable<Violation> GetViolationsFrom(IEnumerable<string> references)
+        public IEnumerable<Violation> GetViolationsFrom(IEnumerable<ReferenceEvaluationContext<string>> references)
         {
             var fromProjectPath = this.projectPathProvider.GetRelativePath(this.projectFilePath);
 
@@ -25,13 +25,19 @@
             {
                 if (fromProjectPath.StartsWith(rule.FromPath))
                 {
-                    foreach (var reference in references)
+                    foreach (var referenceContext in references)
                     {
-                        var toProjectPath = this.projectPathProvider.GetRelativePath(reference);
+                        var toProjectPath = this.projectPathProvider.GetRelativePath(referenceContext.Reference);
 
                         if (toProjectPath.StartsWith(rule.ToPath))
                         {
-                            yield return new Violation(rule, reference);
+                            // Check if this warning should be suppressed
+                            if (referenceContext.IsWarningSuppressed)
+                            {
+                                continue;
+                            }
+
+                            yield return new Violation(rule, referenceContext.Reference);
                         }
                     }
                 }

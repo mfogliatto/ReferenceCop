@@ -17,12 +17,13 @@
             this.referenceNameComparer = referenceNameComparer;
         }
 
-        public IEnumerable<Violation> GetViolationsFrom(IEnumerable<AssemblyIdentity> references)
+        public IEnumerable<Violation> GetViolationsFrom(IEnumerable<ReferenceEvaluationContext<AssemblyIdentity>> references)
         {
             foreach (var rule in this.rules)
             {
-                foreach (var reference in references)
+                foreach (var referenceContext in references)
                 {
+                    var reference = referenceContext.Reference;
                     if (string.IsNullOrEmpty(reference?.Name))
                     {
                         throw new InvalidOperationException("Reference name cannot be null or empty.");
@@ -30,6 +31,12 @@
 
                     if (this.referenceNameComparer.Equals(rule.Key, reference.Name))
                     {
+                        // Check if this warning should be suppressed
+                        if (referenceContext.IsWarningSuppressed)
+                        {
+                            continue;
+                        }
+
                         yield return new Violation(rule.Value, reference.Name);
                     }
                 }
