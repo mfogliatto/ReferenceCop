@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Immutable;
     using System.Diagnostics;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -12,7 +13,7 @@
         private const string LaunchDebuggerKey = "build_property.LaunchDebugger";
         private const string RoslynDebuggerTriggerValue = "Roslyn";
 
-        private IViolationDetector<AssemblyIdentity> detector;
+        private IViolationDetector<AssemblyIdentity> assemblyNameViolationDetector;
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
         DiagnosticDescriptors.GeneralError,
@@ -29,7 +30,7 @@
                 {
                     var configLoader = new XmlConfigurationLoader(compilationAnalysisContext);
                     var config = configLoader.Load();
-                    this.detector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
+                    this.assemblyNameViolationDetector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
                     this.AnalyzeCompilation(compilationAnalysisContext);
                 }
                 catch (Exception ex)
@@ -52,7 +53,12 @@
         private void AnalyzeCompilation(CompilationAnalysisContext compilationAnalysisContext)
         {
             var compilation = compilationAnalysisContext.Compilation;
-            foreach (var violation in this.detector.GetViolationsFrom(compilation.ReferencedAssemblyNames))
+
+            var evaluationContexts = compilation.ReferencedAssemblyNames
+                .Select(assemblyRef => ReferenceEvaluationContextFactory.Create(assemblyRef))
+                .ToList();
+
+            foreach (var violation in this.assemblyNameViolationDetector.GetViolationsFrom(evaluationContexts))
             {
                 compilationAnalysisContext.ReportDiagnostic(DiagnosticFactory.CreateFor(violation));
             }

@@ -4,6 +4,6 @@
 
     public interface IViolationDetector<TAssemblyIdentity>
     {
-        IEnumerable<Violation> GetViolationsFrom(IEnumerable<TAssemblyIdentity> references);
+        IEnumerable<Violation> GetViolationsFrom(IEnumerable<ReferenceEvaluationContext<TAssemblyIdentity>> references);
     }
 }

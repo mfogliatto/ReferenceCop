@@ -1,6 +1,7 @@
 namespace ReferenceCop.MSBuild.Tests
 {
     using System.IO;
+    using System.Linq;
     using FluentAssertions;
     using Microsoft.Build.Evaluation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,6 +26,30 @@ namespace ReferenceCop.MSBuild.Tests
         }
 
         [TestMethod]
+        public void GetProjectReferences_WhenReferenceHasNoWarn_ReturnsNoWarnValue()
+        {
+            // Arrange.
+            string tempProjectPath = this.CreateTempProjectFileWithReferenceNoWarn();
+
+            try
+            {
+                // Act.
+                var references = this.provider.GetProjectReferences(tempProjectPath).ToList();
+
+                // Assert.
+                references.Should().ContainSingle();
+                var reference = references.Single();
+                reference.Path.Should().Be("TestReferenceWithNoWarn.csproj");
+                reference.NoWarn.Should().ContainSingle().Which.Should().Be("RC0001;RC0002");
+            }
+            finally
+            {
+                // Cleanup
+                File.Delete(tempProjectPath);
+            }
+        }
+
+        [TestMethod]
         public void GetProjectReferences_WhenProjectHasOneReference_ReturnsSingleReference()
         {
             // Arrange.
@@ -36,7 +61,7 @@ namespace ReferenceCop.MSBuild.Tests
                 var references = this.provider.GetProjectReferences(tempProjectPath);
 
                 // Assert.
-                references.Should().NotBeNull().And.ContainSingle(r => r == TestReference);
+                references.Should().NotBeNull().And.ContainSingle(r => r.Path == TestReference);
             }
             finally
             {
@@ -113,6 +138,21 @@ namespace ReferenceCop.MSBuild.Tests
     <TargetFramework>net6.0</TargetFramework>
     <{TestPropertyName}>{TestPropertyValue}</{TestPropertyName}>
   </PropertyGroup>
+</Project>";
+            File.WriteAllText(tempFile, projectContent);
+            return tempFile;
+        }
+
+        private string CreateTempProjectFileWithReferenceNoWarn()
+        {
+            string tempFile = Path.GetTempFileName() + ".csproj";
+            string projectContent = @"<Project>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include=""TestReferenceWithNoWarn.csproj"" NoWarn=""RC0001;RC0002"" />
+  </ItemGroup>
 </Project>";
             File.WriteAllText(tempFile, projectContent);
             return tempFile;
