@@ -1,6 +1,38 @@
 <Project>
   <UsingTask TaskName="ReferenceCopTask" AssemblyFile="ReferenceCop.MSBuild.dll" />
 
+  <!-- Define global properties that will be set later -->
+  <PropertyGroup>
+    <ReferenceCop_NoWarnAssemblies></ReferenceCop_NoWarnAssemblies>
+  </PropertyGroup>
+
+  <!-- Define properties that will be visible to Roslyn analyzers -->
+  <!-- These properties will be prefixed with 'build_property.' when accessed by analyzers -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="ReferenceCop_NoWarnAssemblies" />
+  </ItemGroup>
+
+  <!-- This target runs before compilation and before analyzer execution to collect and expose NoWarn information -->
+  <Target Name="CollectNoWarnAssemblies" BeforeTargets="CoreCompile;BeforeCompile" AfterTargets="PrepareForBuild">
+    <!-- Collect NoWarn settings from project references, assembly references, and package references -->
+    <ItemGroup>
+      <_ReferenceCopNoWarnItem Include="@(ProjectReference->'%(Identity)')" Condition="'%(ProjectReference.NoWarn)' != ''">
+        <NoWarn>%(ProjectReference.NoWarn)</NoWarn>
+      </_ReferenceCopNoWarnItem>
+      <_ReferenceCopNoWarnItem Include="@(Reference->'%(Identity)')" Condition="'%(Reference.NoWarn)' != ''">
+        <NoWarn>%(Reference.NoWarn)</NoWarn>
+      </_ReferenceCopNoWarnItem>
+      <_ReferenceCopNoWarnItem Include="@(PackageReference->'%(Identity)')" Condition="'%(PackageReference.NoWarn)' != ''">
+        <NoWarn>%(PackageReference.NoWarn)</NoWarn>
+      </_ReferenceCopNoWarnItem>
+    </ItemGroup>
+
+    <!-- Set properties that will be visible to analyzers -->
+    <PropertyGroup>
+      <ReferenceCop_NoWarnAssemblies>@(_ReferenceCopNoWarnItem->'%(Identity)|%(NoWarn)', ';')</ReferenceCop_NoWarnAssemblies>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="RunReferenceCop" BeforeTargets="Build">
     <ItemGroup>
       <ProjectFile Include="$(MSBuildProjectFullPath)" />
