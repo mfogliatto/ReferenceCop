@@ -40,7 +40,7 @@ namespace ReferenceCop.MSBuild.Tests
                 references.Should().ContainSingle();
                 var reference = references.Single();
                 reference.Path.Should().Be("TestReferenceWithNoWarn.csproj");
-                reference.NoWarn.Should().ContainSingle().Which.Should().Be("RC0001;RC0002");
+                reference.NoWarn.Should().Contain("RC0001").And.Contain("RC0002");
             }
             finally
             {
@@ -151,7 +151,7 @@ namespace ReferenceCop.MSBuild.Tests
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include=""TestReferenceWithNoWarn.csproj"" NoWarn=""RC0001;RC0002"" />
+    <ProjectReference Include=""TestReferenceWithNoWarn.csproj"" NoWarn=""RC0001,RC0002"" />
   </ItemGroup>
 </Project>";
             File.WriteAllText(tempFile, projectContent);

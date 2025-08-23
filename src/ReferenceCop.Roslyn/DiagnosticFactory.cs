@@ -1,4 +1,4 @@
-﻿namespace ReferenceCop
+﻿namespace ReferenceCop.Roslyn
 {
     using System;
     using Microsoft.CodeAnalysis;

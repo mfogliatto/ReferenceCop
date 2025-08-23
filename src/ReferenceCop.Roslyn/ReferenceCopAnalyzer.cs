@@ -1,4 +1,4 @@
-﻿namespace ReferenceCop
+﻿namespace ReferenceCop.Roslyn
 {
     using System;
     using System.Collections.Immutable;
@@ -12,8 +12,15 @@
     {
         private const string LaunchDebuggerKey = "build_property.LaunchDebugger";
         private const string RoslynDebuggerTriggerValue = "Roslyn";
+        private const string NoWarnAssembliesKey = "build_property.ReferenceCop_NoWarnAssemblies";
 
+        private readonly INoWarnAssembliesProvider noWarnAssembliesProvider;
         private IViolationDetector<AssemblyIdentity> assemblyNameViolationDetector;
+
+        public ReferenceCopAnalyzer()
+        {
+            this.noWarnAssembliesProvider = new NoWarnAssembliesProvider();
+        }
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
         DiagnosticDescriptors.GeneralError,
@@ -53,9 +60,16 @@
         private void AnalyzeCompilation(CompilationAnalysisContext compilationAnalysisContext)
         {
             var compilation = compilationAnalysisContext.Compilation;
+            compilationAnalysisContext.Options.AnalyzerConfigOptionsProvider.GlobalOptions.TryGetValue(NoWarnAssembliesKey, out string noWarnAssemblies);
+            var noWarnByAssembly = this.noWarnAssembliesProvider.GetNoWarnByAssembly(noWarnAssemblies);
 
             var evaluationContexts = compilation.ReferencedAssemblyNames
-                .Select(assemblyRef => ReferenceEvaluationContextFactory.Create(assemblyRef))
+                .Select(assemblyRef =>
+                {
+                    var assemblyName = assemblyRef.Name;
+                    var noWarnCodes = noWarnByAssembly.TryGetValue(assemblyName, out var codes) ? codes : null;
+                    return ReferenceEvaluationContextFactory.Create(assemblyRef, noWarnCodes);
+                })
                 .ToList();
 
             foreach (var violation in this.assemblyNameViolationDetector.GetViolationsFrom(evaluationContexts))

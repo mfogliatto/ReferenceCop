@@ -34,7 +34,7 @@ namespace ReferenceCop.Roslyn.Tests
             var violation = new Violation(rule, referenceName);
 
             // Act
-            var diagnostic = global::ReferenceCop.DiagnosticFactory.CreateFor(violation);
+            var diagnostic = DiagnosticFactory.CreateFor(violation);
 
             // Assert
             using (new AssertionScope())
@@ -72,7 +72,7 @@ namespace ReferenceCop.Roslyn.Tests
             var violation = new Violation(rule, referenceName);
 
             // Act
-            var diagnostic = global::ReferenceCop.DiagnosticFactory.CreateFor(violation);
+            var diagnostic = DiagnosticFactory.CreateFor(violation);
 
             // Assert
             using (new AssertionScope())
@@ -111,7 +111,7 @@ namespace ReferenceCop.Roslyn.Tests
             var violation = new Violation(rule, referenceName);
 
             // Act
-            var diagnostic = global::ReferenceCop.DiagnosticFactory.CreateFor(violation);
+            var diagnostic = DiagnosticFactory.CreateFor(violation);
 
             // Assert
             diagnostic.Should().BeNull();
@@ -129,7 +129,7 @@ namespace ReferenceCop.Roslyn.Tests
             var exception = new InvalidOperationException(exceptionMessage);
 
             // Act
-            var diagnostic = global::ReferenceCop.DiagnosticFactory.CreateFor(exception);
+            var diagnostic = DiagnosticFactory.CreateFor(exception);
 
             // Assert
             using (new AssertionScope())
