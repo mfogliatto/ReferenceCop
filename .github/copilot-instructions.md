@@ -1,5 +1,3 @@
-# claude.md
-
 ## Project Overview
 
 **Project Name:** ReferenceCop  
@@ -65,36 +63,7 @@ dotnet pack src/ReferenceCop.Package/ReferenceCop.Package.csproj -c Release
 
 ### Code Style Guidelines
 
-Please ensure all code follows StyleCop-based conventions as defined in the project's configuration file located at `src\stylecop.json`. This file defines the following important style guidelines:
-
-1. **Documentation Rules**: Internal elements, private fields, and interfaces don't require documentation comments.
-2. **Ordering Rules**: 
-   - Using directives should be placed inside namespaces
-   - System using directives should be listed first
-3. **Layout Rules**: 
-   - All files must end with a newline
-   - Use 4 spaces for indentation, not tabs
-   - Maintain consistent indentation when adding or modifying code blocks
-4. **File Organization**:
-   - Each type (class, interface, struct, enum) should have its own file
-   - The file name should match the type name exactly
-   - Nested types can be in the same file as their parent type
-
-5. **Whitespace Rules**:
-   - No trailing whitespace at the end of lines (SA1028)
-   - No empty lines with whitespace characters
-   - Use a single blank line to separate logical code blocks
-   - Use a single space after keywords like `if`, `for`, `while`, etc.
-   - Use a single space before opening braces
-
-6. **Indentation Guidelines**:
-   - Always preserve the existing indentation style when modifying code
-   - Match the surrounding code's indentation level precisely when adding new code
-   - Ensure that all opening and closing braces maintain proper alignment
-   - For method parameters and arguments that span multiple lines, align parameters with the first parameter
-   - Do not mix tabs and spaces for indentation
-
-When adding or modifying code, adhere to these style conventions for consistency across the project.
+Please ensure all code follows the project defined [StyleCop-based conventions](../src/stylecop.json). This file defines the important style guidelines and should always be referenced when adding or modifying code.
 
 ### Testing Guidelines
 
