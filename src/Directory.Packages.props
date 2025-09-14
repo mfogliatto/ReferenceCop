@@ -21,6 +21,6 @@
     <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
   <ItemGroup>
-    <GlobalPackageReference Include="ReferenceCop" Version="0.0.4-alpha" />
+    <GlobalPackageReference Include="ReferenceCop" Version="0.0.6-alpha" />
   </ItemGroup>
 </Project>
