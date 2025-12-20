@@ -149,3 +149,6 @@ tools/
 
 # VS Code settings
 .vscode/mcp.json
+
+# Auto-generated package version file for playground
+src/ReferenceCop.Package/package-version.txt
