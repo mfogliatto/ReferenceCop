@@ -51,7 +51,6 @@
                 try
                 {
                     this.rules.Add(rule.Pattern, rule);
-                    break;
                 }
                 catch (ArgumentException)
                 {

@@ -13,6 +13,37 @@
     public class AssemblyNameViolationDetectorTests
     {
         [TestMethod]
+        public void GetViolationsFrom_WhenMultipleRulesDefined_LoadsAndDetectsAllRules()
+        {
+            // Arrange.
+            const string assembly1 = "System.Xml";
+            const string assembly2 = "System.Text";
+            const string assembly3 = "System.Data";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(assembly1)
+                .WithAssemblyNameRule(assembly2)
+                .WithAssemblyNameRule(assembly3)
+                .Build();
+            var detector = new AssemblyNameViolationDetector(new ExactMatchComparer(), config);
+            var references = new[]
+            {
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(assembly1)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(assembly2)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(assembly3)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.IO")),
+            };
+
+            // Act
+            var violations = detector.GetViolationsFrom(references).ToList();
+
+            // Assert
+            violations.Should().HaveCount(3, "because all three rules should be loaded and detected");
+            violations.Should().Contain(v => v.ReferenceName == assembly1);
+            violations.Should().Contain(v => v.ReferenceName == assembly2);
+            violations.Should().Contain(v => v.ReferenceName == assembly3);
+        }
+
+        [TestMethod]
         public void GetViolationsFrom_WhenNoRules_ReturnsEmpty()
         {
             // Arrange.
