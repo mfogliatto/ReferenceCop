@@ -1,0 +1,33 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- ReferenceCopRepositoryRoot as required by ReferenceCop -->
+    <ReferenceCopRepositoryRoot>$(MSBuildThisFileDirectory)</ReferenceCopRepositoryRoot>
+
+    <!-- 
+      Read the package version from the file written during pack
+      Falls back to a default version if file doesn't exist
+    -->
+    <PlaygroundVersionFile>$(MSBuildThisFileDirectory)..\..\src\ReferenceCop.Package\package-version.txt</PlaygroundVersionFile>
+    <ReferenceCopVersion Condition="Exists('$(PlaygroundVersionFile)')">$([System.IO.File]::ReadAllText('$(PlaygroundVersionFile)').Trim())</ReferenceCopVersion>
+    <ReferenceCopVersion Condition="'$(ReferenceCopVersion)' == ''">20241220.000000</ReferenceCopVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 
+      ReferenceCop package reference applied to all projects in the playground
+      Version is automatically read from package-version.txt after pack
+      The version format for Debug builds is: yyyyMMdd.hhmmss
+    -->
+    <PackageReference Include="ReferenceCop.Dev" Version="$(ReferenceCopVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <!-- ReferenceCop.config as AdditionalFile with required Label -->
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)ReferenceCop.config">
+      <Label>ReferenceCopConfig</Label>
+    </AdditionalFiles>
+  </ItemGroup>
+
+</Project>

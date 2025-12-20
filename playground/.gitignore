@@ -1,0 +1,3 @@
+# Standard .NET ignores for the test projects
+**/bin/
+**/obj/

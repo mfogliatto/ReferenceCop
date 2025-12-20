@@ -58,4 +58,13 @@
     </ItemGroup>
   </Target>
 
+  <!-- Write package version to file for playground offline dev feed -->
+  <Target Name="_WritePackageVersionForPlaygroundOfflineDevFeed" AfterTargets="Pack" Condition="'$(IsDevEnvironment)' == 'true'">
+    <PropertyGroup>
+      <VersionFile>$(MSBuildThisFileDirectory)package-version.txt</VersionFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(VersionFile)" Lines="$(PackageVersion)" Overwrite="true" />
+    <Message Text="Wrote package version $(PackageVersion) to $(VersionFile)" Importance="high" />
+  </Target>
+
 </Project>
