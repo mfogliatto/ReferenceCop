@@ -73,13 +73,22 @@
                 var configLoader = this.configLoaderFactory(configFilePath);
                 var config = configLoader.Load();
 
+                if (config.EnableDebugMessages && config.UseExperimentalDetectors)
+                {
+                    this.BuildEngine.LogDebugMessage("Using experimental detectors");
+                }
+
                 var projectReferences = this.projectReferencesProvider.GetProjectReferences(this.ProjectFile.ItemSpec);
                 var evaluationContexts = projectReferences
                     .Select(_ => ReferenceEvaluationContextFactory.Create(_.Path, _.NoWarn))
                     .ToList();
 
                 var projectTagViolationDetector = this.projectTagViolationDetectorFactory(config, this.ProjectFile.ItemSpec);
-                foreach (var violation in projectTagViolationDetector.GetViolationsFrom(evaluationContexts))
+                var projectTagViolations = config.UseExperimentalDetectors
+                    ? projectTagViolationDetector.GetViolationsFromExperimental(evaluationContexts)
+                    : projectTagViolationDetector.GetViolationsFrom(evaluationContexts);
+
+                foreach (var violation in projectTagViolations)
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
                     {
@@ -92,7 +101,11 @@
                 var repositoryRoot = this.projectReferencesProvider.GetPropertyValue(
                     this.ProjectFile.ItemSpec, ReferenceCopRepositoryRootProperty);
                 var projectPathViolationDetector = this.projectPathViolationDetectorFactory(config, this.ProjectFile.ItemSpec, repositoryRoot);
-                foreach (var violation in projectPathViolationDetector.GetViolationsFrom(evaluationContexts))
+                var projectPathViolations = config.UseExperimentalDetectors
+                    ? projectPathViolationDetector.GetViolationsFromExperimental(evaluationContexts)
+                    : projectPathViolationDetector.GetViolationsFrom(evaluationContexts);
+
+                foreach (var violation in projectPathViolations)
                 {
                     if (violation.Rule.Severity == ReferenceCopConfig.Rule.ViolationSeverity.Error)
                     {
