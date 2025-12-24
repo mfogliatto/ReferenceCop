@@ -147,6 +147,9 @@ L10N.Integrations/phantom*
 # CAKE
 tools/
 
+# BenchmarkDotNet artifacts
+BenchmarkDotNet.Artifacts/
+
 # VS Code settings
 .vscode/mcp.json
 
