@@ -121,6 +121,42 @@ Here is an example of a `ReferenceCop.config` file:
 
 In case you'd like to enable ReferenceCop and apply the same configuration to multiple projects in a directory, you can do that in a `Directory.Build.props` file by [Customizing the build by folder](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=vs-2022).
 
+### Advanced Configuration
+
+ReferenceCop supports the following optional settings in the `ReferenceCop.config` file:
+
+#### UseExperimentalDetectors
+
+Enables experimental rule detectors that may provide additional validation capabilities. These detectors are under development and may change in future versions.
+
+**Default:** `false`
+
+**Example:**
+```xml
+<ReferenceCopConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/mfogliatto/ReferenceCop/main/ReferenceCopConfig.xsd">
+    <UseExperimentalDetectors>true</UseExperimentalDetectors>
+    <Rules>
+        <!-- Your rules here -->
+    </Rules>
+</ReferenceCopConfig>
+```
+
+#### EnableDebugMessages
+
+Enables detailed debug messages during build and analysis, useful for troubleshooting rule evaluation and detector behavior.
+
+**Default:** `false`
+
+**Example:**
+```xml
+<ReferenceCopConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/mfogliatto/ReferenceCop/main/ReferenceCopConfig.xsd">
+    <EnableDebugMessages>true</EnableDebugMessages>
+    <Rules>
+        <!-- Your rules here -->
+    </Rules>
+</ReferenceCopConfig>
+```
+
 ## License
 
 ReferenceCop is licensed under the MIT license. See LICENSE for more information.
