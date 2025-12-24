@@ -28,6 +28,14 @@
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
+        public static readonly DiagnosticDescriptor DebugMessage = new DiagnosticDescriptor(
+            "RC9999",
+            "Debug Message",
+            "[DEBUG]: {0}",
+            Category,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         private const string Category = "ReferenceCop";
     }
 }

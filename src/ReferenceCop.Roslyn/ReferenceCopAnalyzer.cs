@@ -16,6 +16,7 @@
 
         private readonly INoWarnAssembliesProvider noWarnAssembliesProvider;
         private IViolationDetector<AssemblyIdentity> assemblyNameViolationDetector;
+        private ReferenceCopConfig config;
 
         public ReferenceCopAnalyzer()
         {
@@ -25,7 +26,8 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
         DiagnosticDescriptors.GeneralError,
         DiagnosticDescriptors.IllegalReferenceRule,
-        DiagnosticDescriptors.DiscouragedReferenceRule);
+        DiagnosticDescriptors.DiscouragedReferenceRule,
+        DiagnosticDescriptors.DebugMessage);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -39,8 +41,15 @@
                 try
                 {
                     var configLoader = new XmlConfigurationLoader(compilationAnalysisContext);
-                    var config = configLoader.Load();
-                    this.assemblyNameViolationDetector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
+                    this.config = configLoader.Load();
+                    this.assemblyNameViolationDetector = new AssemblyNameViolationDetector(new PatternMatchComparer(), this.config);
+
+                    if (this.config.EnableDebugMessages && this.config.UseExperimentalDetectors)
+                    {
+                        compilationAnalysisContext.ReportDiagnostic(
+                            DiagnosticFactory.CreateDebugMessage("Using experimental detectors"));
+                    }
+
                     this.AnalyzeCompilation(compilationAnalysisContext);
                 }
                 catch (Exception ex)
@@ -75,7 +84,11 @@
                 })
                 .ToList();
 
-            foreach (var violation in this.assemblyNameViolationDetector.GetViolationsFrom(evaluationContexts))
+            var violations = this.config.UseExperimentalDetectors
+                ? this.assemblyNameViolationDetector.GetViolationsFromExperimental(evaluationContexts)
+                : this.assemblyNameViolationDetector.GetViolationsFrom(evaluationContexts);
+
+            foreach (var violation in violations)
             {
                 compilationAnalysisContext.ReportDiagnostic(DiagnosticFactory.CreateFor(violation));
             }
