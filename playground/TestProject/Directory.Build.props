@@ -30,4 +30,8 @@
     </AdditionalFiles>
   </ItemGroup>
 
+  <Target Name="PrintReferenceCopVersion" BeforeTargets="CoreCompile">
+    <Message Text="ReferenceCop Version: $(ReferenceCopVersion)" Importance="high" />
+  </Target>
+
 </Project>

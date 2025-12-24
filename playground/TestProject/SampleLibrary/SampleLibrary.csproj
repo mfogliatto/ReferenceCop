@@ -6,10 +6,18 @@
     <Nullable>enable</Nullable>
     <!-- Tag this project as a library -->
     <ProjectTag>Library</ProjectTag>
+
+    <!-- Uncomment to attach debugger during build -->
+    <!-- <LaunchDebugger>MSBuild</LaunchDebugger> -->
+    <!--<LaunchDebugger>Roslyn</LaunchDebugger>-->
   </PropertyGroup>
+
+  <!-- Required for passing LaunchDebugger property to Roslyn Analyzer -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="LaunchDebugger" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
 </Project>
