@@ -221,5 +221,213 @@
             // Assert
             act.Should().Throw<InvalidOperationException>();
         }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenNoRules_ReturnsEmpty()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfig();
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
+
+            // Act.
+            var result = detector.GetViolationsFromExperimental(new List<ReferenceEvaluationContext<AssemblyIdentity>>
+            {
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Linq")),
+            });
+
+            // Assert.
+            result.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenMatchingRule_ReturnsViolation()
+        {
+            // Arrange.
+            const string detectableValue = "System.Xml";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(detectableValue)
+                .Build();
+            var comparer = Substitute.For<IEqualityComparer<string>>();
+            comparer.Equals(detectableValue, detectableValue).Returns(true);
+            var detector = new AssemblyNameViolationDetector(comparer, config);
+            var references = new[]
+            {
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(detectableValue)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Serialization")),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Linq")),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFromExperimental(references);
+
+            // Assert
+            diagnostics.Should().HaveCount(1);
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenMatchingRuleUsesPatternMatch_ReturnsViolations()
+        {
+            // Arrange.
+            const string partialMatch = "System.Xml";
+            var detectablePattern = $"{partialMatch}.*";
+            var detectableValue1 = $"{partialMatch}.Serialization";
+            var detectableValue2 = $"{partialMatch}.Linq";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(detectablePattern)
+                .Build();
+            var detector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
+            var references = new[]
+            {
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(detectableValue1)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(detectableValue2)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Text")),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFromExperimental(references);
+
+            // Assert
+            diagnostics.Should().HaveCount(2);
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenNoMatchingRules_ReturnsEmpty()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfigBuilder().Build();
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
+            var references = new[]
+            {
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Serialization")),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Xml.Linq")),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFromExperimental(references);
+
+            // Assert
+            diagnostics.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenNoReferences_ReturnsEmpty()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule("somePattern")
+                .Build();
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
+
+            // Act
+            var diagnostics = detector.GetViolationsFromExperimental(Array.Empty<ReferenceEvaluationContext<AssemblyIdentity>>());
+
+            // Assert
+            diagnostics.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenWarningSuppressed_SkipsViolation()
+        {
+            // Arrange.
+            const string detectableValue = "System.Xml";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(detectableValue)
+                .Build();
+            var comparer = Substitute.For<IEqualityComparer<string>>();
+            comparer.Equals(detectableValue, detectableValue).Returns(true);
+            var detector = new AssemblyNameViolationDetector(comparer, config);
+            var references = new[]
+            {
+                // Create with warning suppressed
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity(detectableValue), isWarningSuppressed: true),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFromExperimental(references);
+
+            // Assert
+            diagnostics.Should().BeEmpty("because the violation was suppressed");
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenMultipleReferencesWithSomeSuppressed_ReturnsSomeViolations()
+        {
+            // Arrange.
+            const string partialMatch = "System.Xml";
+            var detectablePattern = $"{partialMatch}.*";
+            var detectableValue1 = $"{partialMatch}.Serialization";
+            var detectableValue2 = $"{partialMatch}.Linq";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(detectablePattern)
+                .Build();
+            var detector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
+            var references = new[]
+            {
+                // Regular reference with no suppression
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity(detectableValue1), isWarningSuppressed: false),
+
+                // Suppressed reference
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity(detectableValue2), isWarningSuppressed: true),
+
+                // Non-matching reference
+                new ReferenceEvaluationContext<AssemblyIdentity>(new AssemblyIdentity("System.Text"), isWarningSuppressed: false),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFromExperimental(references);
+
+            // Assert
+            diagnostics.Should().ContainSingle()
+                .Which.ReferenceName.Should().Be(detectableValue1);
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenNullReference_ThrowsInvalidOperationException()
+        {
+            // Arrange.
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule("somePattern")
+                .Build();
+            var detector = new AssemblyNameViolationDetector(Substitute.For<IEqualityComparer<string>>(), config);
+            var references = new ReferenceEvaluationContext<AssemblyIdentity>[]
+            {
+                ReferenceEvaluationContextFactory.Create<AssemblyIdentity>(null),
+            };
+
+            // Act
+            Action act = () => detector.GetViolationsFromExperimental(references).First();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void GetViolationsFromExperimental_WhenMixedExactAndPatternRules_ReturnsCorrectViolations()
+        {
+            // Arrange.
+            const string exactMatch = "System.Xml";
+            const string pattern = "Microsoft.*";
+            var config = new ReferenceCopConfigBuilder()
+                .WithAssemblyNameRule(exactMatch)
+                .WithAssemblyNameRule(pattern)
+                .Build();
+            var detector = new AssemblyNameViolationDetector(new PatternMatchComparer(), config);
+            var references = new[]
+            {
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity(exactMatch)),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("Microsoft.CodeAnalysis")),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("Microsoft.Build")),
+                ReferenceEvaluationContextFactory.Create(new AssemblyIdentity("System.Text")),
+            };
+
+            // Act
+            var diagnostics = detector.GetViolationsFromExperimental(references).ToList();
+
+            // Assert
+            diagnostics.Should().HaveCount(3);
+            diagnostics.Should().Contain(v => v.ReferenceName == exactMatch);
+            diagnostics.Should().Contain(v => v.ReferenceName == "Microsoft.CodeAnalysis");
+            diagnostics.Should().Contain(v => v.ReferenceName == "Microsoft.Build");
+        }
     }
 }
