@@ -11,7 +11,15 @@
         public ReferenceCopConfig()
         {
             this.Rules = new List<Rule>();
+            this.UseExperimentalDetectors = false;
+            this.EnableDebugMessages = false;
         }
+
+        [XmlElement]
+        public bool UseExperimentalDetectors { get; set; }
+
+        [XmlElement]
+        public bool EnableDebugMessages { get; set; }
 
         [XmlArrayItem(typeof(AssemblyName))]
         [XmlArrayItem(typeof(ProjectTag))]

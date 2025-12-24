@@ -141,6 +141,13 @@ Ensure all required fields in the template are filled out appropriately when cre
 - MSBuild integration in `ReferenceCopTask.cs`
 - Roslyn integration in `ReferenceCopAnalyzer.cs`
 
+#### Adding Roslyn Diagnostics
+When adding new diagnostic descriptors for the Roslyn analyzer:
+1. Define the `DiagnosticDescriptor` in `DiagnosticDescriptors.cs` as a public static readonly field
+2. Register it in the `SupportedDiagnostics` property of `ReferenceCopAnalyzer.cs`
+3. Use `Diagnostic.Create(DiagnosticDescriptors.YourDescriptor, Location.None)` when reporting
+4. Never create inline `DiagnosticDescriptor` instances in analyzer code
+
 ### Code Generation and Modification Guidelines
 
 When adding or modifying code in the ReferenceCop project, follow these guidelines:

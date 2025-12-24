@@ -27,6 +27,22 @@
             }
         }
 
+        public static void LogDebugMessage(this IBuildEngine self, string message)
+        {
+            var warningEvent = new BuildWarningEventArgs(
+                subcategory: SenderName,
+                code: "RC9999",
+                file: default,
+                lineNumber: default,
+                columnNumber: default,
+                endLineNumber: default,
+                endColumnNumber: default,
+                message: $"[DEBUG]: {message}",
+                helpKeyword: default,
+                senderName: SenderName);
+            self.LogWarningEvent(warningEvent);
+        }
+
         internal static void LogErrorEvent(this IBuildEngine self, Exception ex)
         {
             var errorEvent = CreateErrorEventFor(ex);

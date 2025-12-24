@@ -6,7 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ProjectTag>App</ProjectTag>
+
+    <!-- Uncomment to attach debugger during build -->
+    <!-- <LaunchDebugger>MSBuild</LaunchDebugger> -->
+    <!-- <LaunchDebugger>Roslyn</LaunchDebugger> -->
   </PropertyGroup>
+
+  <!-- Required for passing LaunchDebugger property to Roslyn Analyzer -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="LaunchDebugger" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SampleLibrary\SampleLibrary.csproj" />

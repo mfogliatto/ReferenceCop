@@ -1,3 +1,5 @@
 # Standard .NET ignores for the test projects
 **/bin/
 **/obj/
+# Local NuGet packages cache
+local-packages/

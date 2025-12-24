@@ -44,6 +44,11 @@
             }
         }
 
+        public IEnumerable<Violation> GetViolationsFromExperimental(IEnumerable<ReferenceEvaluationContext<string>> references)
+        {
+            return this.GetViolationsFrom(references);
+        }
+
         private void LoadRulesFrom(ReferenceCopConfig config)
         {
             var projectPathRules = config.Rules.OfType<ReferenceCopConfig.ProjectPath>();

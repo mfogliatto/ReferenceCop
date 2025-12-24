@@ -35,5 +35,13 @@
                 Location.None,
                 ex.Message);
         }
+
+        public static Diagnostic CreateDebugMessage(string message)
+        {
+            return Diagnostic.Create(
+                DiagnosticDescriptors.DebugMessage,
+                Location.None,
+                message);
+        }
     }
 }
