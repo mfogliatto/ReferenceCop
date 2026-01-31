@@ -150,8 +150,14 @@ tools/
 # BenchmarkDotNet artifacts
 BenchmarkDotNet.Artifacts/
 
-# VS Code settings
-.vscode/mcp.json
-
 # Auto-generated package version file for playground
 src/ReferenceCop.Package/package-version.txt
+
+# Ralph autonomous agent files
+scripts/ralph/
+prd.json
+progress.txt
+archive/
+
+# Claude Code local settings
+.claude/settings.local.json
