@@ -15,7 +15,10 @@
                 "/consoleloggerparameters:NoSummary",
                 "${fileDirname}"
             ],
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "presentation": {
                 "reveal": "silent"
             },
@@ -32,7 +35,6 @@
                 "Debug",
                 "/property:GenerateFullPaths=true"
             ],
-            "group": "build",
             "presentation": {
                 "reveal": "silent"
             },
