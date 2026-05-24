@@ -34,3 +34,11 @@ jobs:
     - name: Run Tests in ReferenceCop.MSBuild.Tests
       run: dotnet test --verbosity normal
       working-directory: src/ReferenceCop.MSBuild.Tests
+
+    - name: Pack ReferenceCop for playground
+      run: dotnet pack -c Debug --nologo
+      working-directory: src/ReferenceCop.Package
+
+    - name: Run end-to-end tests
+      run: ./playground/Run-E2ETests.ps1
+      shell: pwsh

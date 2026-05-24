@@ -7,4 +7,7 @@
   </Folder>
   <Project Path="TestProject/SampleApp/SampleApp.csproj" />
   <Project Path="TestProject/SampleLibrary/SampleLibrary.csproj" />
+  <Project Path="TestProject/InternalLib/InternalLib.csproj" />
+  <Project Path="TestProject/ToolsProject/ToolsProject.csproj" />
+  <Project Path="TestProject/ValidApp/ValidApp.csproj" />
 </Solution>

@@ -35,6 +35,14 @@ jobs:
       run: dotnet test --verbosity normal
       working-directory: src/ReferenceCop.MSBuild.Tests
 
+    - name: Pack ReferenceCop for playground
+      run: dotnet pack -c Debug --nologo
+      working-directory: src/ReferenceCop.Package
+
+    - name: Run end-to-end tests
+      run: ./playground/Run-E2ETests.ps1
+      shell: pwsh
+
     - name: Set NuGet Package Version Environment Variable from tag (only for tagged builds)
       if: ${{ github.ref_type == 'tag' }}
       run: echo "PKGVERSION=$('${{ github.ref_name }}'.replace('v',''))" >> $env:GITHUB_ENV
