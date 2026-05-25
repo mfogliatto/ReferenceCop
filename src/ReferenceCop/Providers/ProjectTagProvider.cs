@@ -1,5 +1,6 @@
 namespace ReferenceCop
 {
+    using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
@@ -12,20 +13,25 @@ namespace ReferenceCop
         internal const string ProjectTagNode = "ProjectTag";
         internal const string UnknownProjectTag = "Unknown";
 
+        private readonly ConcurrentDictionary<string, string> _cache = new();
+
         public string GetProjectTag(string projectFilePath)
         {
-            if (!File.Exists(projectFilePath))
+            return _cache.GetOrAdd(projectFilePath, path =>
             {
-                return UnknownProjectTag;
-            }
+                if (!File.Exists(path))
+                {
+                    return UnknownProjectTag;
+                }
 
-            var projectFile = XDocument.Load(projectFilePath);
-            var projectTag = projectFile
-                .Descendants(PropertyGroupNode)
-                .Elements(ProjectTagNode)
-                .FirstOrDefault()?.Value;
+                var projectFile = XDocument.Load(path);
+                var projectTag = projectFile
+                    .Descendants(PropertyGroupNode)
+                    .Elements(ProjectTagNode)
+                    .FirstOrDefault()?.Value;
 
-            return projectTag ?? UnknownProjectTag;
+                return projectTag ?? UnknownProjectTag;
+            });
         }
     }
 }
