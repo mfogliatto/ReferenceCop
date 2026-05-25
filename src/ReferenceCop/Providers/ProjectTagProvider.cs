@@ -13,11 +13,11 @@ namespace ReferenceCop
         internal const string ProjectTagNode = "ProjectTag";
         internal const string UnknownProjectTag = "Unknown";
 
-        private readonly ConcurrentDictionary<string, string> _cache = new();
+        private readonly ConcurrentDictionary<string, string> cache = new ConcurrentDictionary<string, string>();
 
         public string GetProjectTag(string projectFilePath)
         {
-            return _cache.GetOrAdd(projectFilePath, path =>
+            return this.cache.GetOrAdd(projectFilePath, path =>
             {
                 if (!File.Exists(path))
                 {
