@@ -36,7 +36,7 @@ jobs:
       working-directory: src/ReferenceCop.MSBuild.Tests
 
     - name: Pack ReferenceCop for playground
-      run: dotnet pack -c Debug --nologo
+      run: dotnet pack -c Release --nologo
       working-directory: src/ReferenceCop.Package
 
     - name: Run end-to-end tests
