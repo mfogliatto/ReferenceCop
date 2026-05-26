@@ -1,4 +1,4 @@
-﻿namespace ReferenceCop
+namespace ReferenceCop
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -46,7 +46,37 @@
 
         public IEnumerable<Violation> GetViolationsFromExperimental(IEnumerable<ReferenceEvaluationContext<string>> references)
         {
-            return this.GetViolationsFrom(references);
+            var fromProjectTag = this.projectTagProvider.GetProjectTag(this.projectFilePath);
+
+            var matchingRules = this.rules.Where(r => r.FromProjectTag == fromProjectTag).ToList();
+            if (matchingRules.Count == 0)
+            {
+                yield break;
+            }
+
+            var blockedTagToRule = new Dictionary<string, ReferenceCopConfig.ProjectTag>();
+            foreach (var rule in matchingRules)
+            {
+                if (!blockedTagToRule.ContainsKey(rule.ToProjectTag))
+                {
+                    blockedTagToRule[rule.ToProjectTag] = rule;
+                }
+            }
+
+            foreach (var referenceContext in references)
+            {
+                if (referenceContext.IsWarningSuppressed)
+                {
+                    continue;
+                }
+
+                var toTag = this.projectTagProvider.GetProjectTag(referenceContext.Reference);
+
+                if (blockedTagToRule.TryGetValue(toTag, out var matchedRule))
+                {
+                    yield return new Violation(matchedRule, referenceContext.Reference);
+                }
+            }
         }
 
         private void LoadRulesFrom(ReferenceCopConfig config)
