@@ -138,17 +138,23 @@ $testCsproj = @"
 </Project>
 "@
 
-# Save original, write modified, test, restore
+# Save originals, write modified project and minimal program
 $originalSampleApp = Get-Content $sampleAppCsproj -Raw
+$sampleAppProgram = "$PlaygroundRoot/SampleApp/Program.cs"
+$originalProgram = Get-Content $sampleAppProgram -Raw
+$minimalProgram = "namespace SampleApp;`npublic class Program { public static void Main() { } }"
+
 Set-Content $sampleAppCsproj -Value $testCsproj -NoNewline
+Set-Content $sampleAppProgram -Value $minimalProgram -NoNewline
 dotnet restore "$sampleAppCsproj" --nologo -v quiet 2>$null
 
 Assert-BuildFails "SampleApp" `
     "ProjectPath rule: App cannot reference Internal" `
     "RC000[12]"
 
-# Restore original
+# Restore originals
 Set-Content $sampleAppCsproj -Value $originalSampleApp -NoNewline
+Set-Content $sampleAppProgram -Value $originalProgram -NoNewline
 dotnet restore "$sampleAppCsproj" --nologo -v quiet 2>$null
 
 # Scenario 3: ProjectTag rule - App referencing Tools project should warn
@@ -171,6 +177,7 @@ $toolsTestCsproj = @"
 "@
 
 Set-Content $sampleAppCsproj -Value $toolsTestCsproj -NoNewline
+Set-Content $sampleAppProgram -Value $minimalProgram -NoNewline
 dotnet restore "$sampleAppCsproj" --nologo -v quiet 2>$null
 
 # ProjectTag rule has Severity=Warning, so build may succeed but with warnings
@@ -187,8 +194,9 @@ if ($output -match "RC000[12]") {
     $script:Failures += "ProjectTag rule: App cannot reference Tools (warning)"
 }
 
-# Restore original
+# Restore originals
 Set-Content $sampleAppCsproj -Value $originalSampleApp -NoNewline
+Set-Content $sampleAppProgram -Value $originalProgram -NoNewline
 dotnet restore "$sampleAppCsproj" --nologo -v quiet 2>$null
 
 # Scenario 4: Valid project builds successfully (no violations)
