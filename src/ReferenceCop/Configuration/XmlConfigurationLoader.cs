@@ -51,11 +51,11 @@
             }
         }
 
+        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(ReferenceCopConfig));
+
         private static ReferenceCopConfig ParseConfigFrom(Stream stream)
         {
-            var xmlSerializer = new XmlSerializer(typeof(ReferenceCopConfig));
-
-            return (ReferenceCopConfig)xmlSerializer.Deserialize(stream);
+            return (ReferenceCopConfig)Serializer.Deserialize(stream);
         }
     }
 }
