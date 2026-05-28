@@ -37,6 +37,12 @@
                                 continue;
                             }
 
+                            // Check if this project is exempt from the rule
+                            if (rule.IsProjectExempt(System.IO.Path.GetFileNameWithoutExtension(this.projectFilePath)))
+                            {
+                                continue;
+                            }
+
                             yield return new Violation(rule, referenceContext.Reference);
                         }
                     }

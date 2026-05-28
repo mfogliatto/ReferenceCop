@@ -11,11 +11,13 @@
         private readonly Dictionary<string, ReferenceCopConfig.Rule> exactMatchRules;
         private readonly List<KeyValuePair<string, ReferenceCopConfig.Rule>> patternRules;
         private readonly IEqualityComparer<string> referenceNameComparer;
+        private readonly string projectName;
 
-        public AssemblyNameViolationDetector(IEqualityComparer<string> referenceNameComparer, ReferenceCopConfig config)
+        public AssemblyNameViolationDetector(IEqualityComparer<string> referenceNameComparer, ReferenceCopConfig config, string projectName = null)
         {
             this.rules = new Dictionary<string, ReferenceCopConfig.Rule>(referenceNameComparer);
             this.referenceNameComparer = referenceNameComparer;
+            this.projectName = projectName;
 
             // Separate exact matches from patterns for performance optimization.
             this.exactMatchRules = new Dictionary<string, ReferenceCopConfig.Rule>(StringComparer.InvariantCulture);
@@ -40,6 +42,12 @@
                     {
                         // Check if this warning should be suppressed
                         if (referenceContext.IsWarningSuppressed)
+                        {
+                            continue;
+                        }
+
+                        // Check if this project is exempt from the rule
+                        if (rule.Value.IsProjectExempt(this.projectName))
                         {
                             continue;
                         }
@@ -78,7 +86,10 @@
                 // Check exact match rules with O(1) lookup
                 if (this.exactMatchRules.TryGetValue(reference.Name, out var exactRule))
                 {
-                    yield return new Violation(exactRule, reference.Name);
+                    if (!exactRule.IsProjectExempt(this.projectName))
+                    {
+                        yield return new Violation(exactRule, reference.Name);
+                    }
                 }
 
                 // Check pattern rules - only iterate through patterns (typically much smaller than total rules)
@@ -86,7 +97,10 @@
                 {
                     if (this.referenceNameComparer.Equals(patternRule.Key, reference.Name))
                     {
-                        yield return new Violation(patternRule.Value, reference.Name);
+                        if (!patternRule.Value.IsProjectExempt(this.projectName))
+                        {
+                            yield return new Violation(patternRule.Value, reference.Name);
+                        }
                     }
                 }
             }

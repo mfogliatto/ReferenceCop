@@ -15,6 +15,17 @@
                     <xs:element name="Description" type="xs:string" />
                     <xs:element name="Severity" type="xs:string" />
                     <xs:element name="Pattern" type="xs:string" />
+                    <xs:element name="Exceptions" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Project" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="Name" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
                   </xs:all>
                 </xs:complexType>
               </xs:element>
@@ -26,6 +37,17 @@
                     <xs:element name="Severity" type="xs:string" />
                     <xs:element name="FromProjectTag" type="xs:string" />
                     <xs:element name="ToProjectTag" type="xs:string" />
+                    <xs:element name="Exceptions" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Project" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="Name" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
                   </xs:all>
                 </xs:complexType>
               </xs:element>
@@ -37,6 +59,17 @@
                     <xs:element name="Severity" type="xs:string" />
                     <xs:element name="FromPath" type="xs:string" />
                     <xs:element name="ToPath" type="xs:string" />
+                    <xs:element name="Exceptions" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Project" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="Name" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
                   </xs:all>
                 </xs:complexType>
               </xs:element>

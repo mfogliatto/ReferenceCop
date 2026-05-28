@@ -39,6 +39,11 @@
                 Warning,
             }
 
+            public Rule()
+            {
+                this.Exceptions = new List<ProjectException>();
+            }
+
             [XmlElement]
             public string Name { get; set; }
 
@@ -47,6 +52,40 @@
 
             [XmlElement]
             public ViolationSeverity Severity { get; set; }
+
+            [XmlArray]
+            [XmlArrayItem("Project")]
+            public List<ProjectException> Exceptions { get; set; }
+
+            /// <summary>
+            /// Determines whether the specified project is exempt from this rule.
+            /// </summary>
+            /// <param name="projectName">The project name to check.</param>
+            /// <returns>True if the project is exempt; otherwise false.</returns>
+            public bool IsProjectExempt(string projectName)
+            {
+                if (string.IsNullOrEmpty(projectName) || this.Exceptions == null || this.Exceptions.Count == 0)
+                {
+                    return false;
+                }
+
+                foreach (var exception in this.Exceptions)
+                {
+                    if (string.Equals(exception.Name, projectName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        [Serializable]
+        public class ProjectException
+        {
+            [XmlAttribute]
+            public string Name { get; set; }
         }
 
         [Serializable]

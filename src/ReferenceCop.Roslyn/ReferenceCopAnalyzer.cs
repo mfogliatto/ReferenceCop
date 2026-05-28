@@ -42,7 +42,7 @@
                 {
                     var configLoader = new XmlConfigurationLoader(compilationAnalysisContext);
                     this.config = configLoader.Load();
-                    this.assemblyNameViolationDetector = new AssemblyNameViolationDetector(new PatternMatchComparer(), this.config);
+                    this.assemblyNameViolationDetector = new AssemblyNameViolationDetector(new PatternMatchComparer(), this.config, compilationAnalysisContext.Compilation.AssemblyName);
 
                     if (this.config.EnableDebugMessages && this.config.UseExperimentalDetectors)
                     {
