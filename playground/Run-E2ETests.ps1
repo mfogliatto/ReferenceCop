@@ -74,7 +74,7 @@ function Assert-BuildSucceeds($project, $testName) {
 if ($PackFirst) {
     Write-Host "`nPacking ReferenceCop..." -ForegroundColor Yellow
     Push-Location "$RepoRoot/src/ReferenceCop.Package"
-    dotnet pack -c Debug --nologo -v quiet
+    dotnet pack -c Release --nologo -v quiet
     if ($LASTEXITCODE -ne 0) {
         Write-Host "FATAL: Failed to pack ReferenceCop" -ForegroundColor Red
         exit 1
