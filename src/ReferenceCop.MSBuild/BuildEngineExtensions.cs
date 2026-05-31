@@ -27,6 +27,16 @@
             }
         }
 
+        public static void LogTraceMessage(this IBuildEngine self, string message)
+        {
+            var messageEvent = new BuildMessageEventArgs(
+                message: $"[TRACE]: {message}",
+                helpKeyword: default,
+                senderName: SenderName,
+                importance: MessageImportance.Normal);
+            self.LogMessageEvent(messageEvent);
+        }
+
         public static void LogDebugMessage(this IBuildEngine self, string message)
         {
             var warningEvent = new BuildWarningEventArgs(

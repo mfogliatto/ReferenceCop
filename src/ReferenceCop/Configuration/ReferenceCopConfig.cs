@@ -13,6 +13,7 @@
             this.Rules = new List<Rule>();
             this.UseExperimentalDetectors = false;
             this.EnableDebugMessages = false;
+            this.EnableTracing = false;
         }
 
         [XmlElement]
@@ -20,6 +21,9 @@
 
         [XmlElement]
         public bool EnableDebugMessages { get; set; }
+
+        [XmlElement]
+        public bool EnableTracing { get; set; }
 
         [XmlArrayItem(typeof(AssemblyName))]
         [XmlArrayItem(typeof(ProjectTag))]

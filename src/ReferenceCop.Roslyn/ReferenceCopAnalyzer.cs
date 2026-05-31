@@ -42,7 +42,11 @@
                 {
                     var configLoader = new XmlConfigurationLoader(compilationAnalysisContext);
                     this.config = configLoader.Load();
-                    this.assemblyNameViolationDetector = new AssemblyNameViolationDetector(new PatternMatchComparer(), this.config);
+                    var traceWriter = this.config.EnableTracing
+                        ? (ITraceWriter)new TraceWriter()
+                        : NullTraceWriter.Instance;
+
+                    this.assemblyNameViolationDetector = new AssemblyNameViolationDetector(new PatternMatchComparer(), this.config, traceWriter);
 
                     if (this.config.EnableDebugMessages && this.config.UseExperimentalDetectors)
                     {
@@ -51,6 +55,16 @@
                     }
 
                     this.AnalyzeCompilation(compilationAnalysisContext);
+
+                    // Flush trace messages as diagnostics
+                    if (traceWriter is TraceWriter tw)
+                    {
+                        foreach (var message in tw.Messages)
+                        {
+                            compilationAnalysisContext.ReportDiagnostic(
+                                DiagnosticFactory.CreateDebugMessage($"[TRACE]: {message}"));
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

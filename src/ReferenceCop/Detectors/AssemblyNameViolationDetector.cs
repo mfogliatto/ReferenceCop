@@ -11,11 +11,18 @@
         private readonly Dictionary<string, ReferenceCopConfig.Rule> exactMatchRules;
         private readonly List<KeyValuePair<string, ReferenceCopConfig.Rule>> patternRules;
         private readonly IEqualityComparer<string> referenceNameComparer;
+        private readonly ITraceWriter traceWriter;
 
         public AssemblyNameViolationDetector(IEqualityComparer<string> referenceNameComparer, ReferenceCopConfig config)
+            : this(referenceNameComparer, config, NullTraceWriter.Instance)
+        {
+        }
+
+        public AssemblyNameViolationDetector(IEqualityComparer<string> referenceNameComparer, ReferenceCopConfig config, ITraceWriter traceWriter)
         {
             this.rules = new Dictionary<string, ReferenceCopConfig.Rule>(referenceNameComparer);
             this.referenceNameComparer = referenceNameComparer;
+            this.traceWriter = traceWriter ?? NullTraceWriter.Instance;
 
             // Separate exact matches from patterns for performance optimization.
             this.exactMatchRules = new Dictionary<string, ReferenceCopConfig.Rule>(StringComparer.InvariantCulture);
@@ -26,6 +33,11 @@
 
         public IEnumerable<Violation> GetViolationsFrom(IEnumerable<ReferenceEvaluationContext<AssemblyIdentity>> references)
         {
+            if (this.traceWriter.IsEnabled)
+            {
+                this.traceWriter.Write($"[AssemblyNameViolationDetector] Evaluating references against {this.rules.Count} rule(s)");
+            }
+
             foreach (var rule in this.rules)
             {
                 foreach (var referenceContext in references)
@@ -41,7 +53,17 @@
                         // Check if this warning should be suppressed
                         if (referenceContext.IsWarningSuppressed)
                         {
+                            if (this.traceWriter.IsEnabled)
+                            {
+                                this.traceWriter.Write($"[AssemblyNameViolationDetector] Rule '{rule.Value.Name}': violation suppressed for '{reference.Name}'");
+                            }
+
                             continue;
+                        }
+
+                        if (this.traceWriter.IsEnabled)
+                        {
+                            this.traceWriter.Write($"[AssemblyNameViolationDetector] Rule '{rule.Value.Name}': VIOLATION for '{reference.Name}' (pattern='{rule.Key}')");
                         }
 
                         yield return new Violation(rule.Value, reference.Name);
@@ -72,12 +94,22 @@
                 // Skip if warning is suppressed
                 if (referenceContext.IsWarningSuppressed)
                 {
+                    if (this.traceWriter.IsEnabled)
+                    {
+                        this.traceWriter.Write($"[AssemblyNameViolationDetector] Reference '{reference.Name}': warning suppressed, skipping");
+                    }
+
                     continue;
                 }
 
                 // Check exact match rules with O(1) lookup
                 if (this.exactMatchRules.TryGetValue(reference.Name, out var exactRule))
                 {
+                    if (this.traceWriter.IsEnabled)
+                    {
+                        this.traceWriter.Write($"[AssemblyNameViolationDetector] Rule '{exactRule.Name}': VIOLATION for '{reference.Name}' (exact match)");
+                    }
+
                     yield return new Violation(exactRule, reference.Name);
                 }
 
@@ -86,6 +118,11 @@
                 {
                     if (this.referenceNameComparer.Equals(patternRule.Key, reference.Name))
                     {
+                        if (this.traceWriter.IsEnabled)
+                        {
+                            this.traceWriter.Write($"[AssemblyNameViolationDetector] Rule '{patternRule.Value.Name}': VIOLATION for '{reference.Name}' (pattern='{patternRule.Key}')");
+                        }
+
                         yield return new Violation(patternRule.Value, reference.Name);
                     }
                 }

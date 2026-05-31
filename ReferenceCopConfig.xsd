@@ -5,6 +5,7 @@
       <xs:sequence>
         <xs:element name="UseExperimentalDetectors" type="xs:boolean" minOccurs="0" />
         <xs:element name="EnableDebugMessages" type="xs:boolean" minOccurs="0" />
+        <xs:element name="EnableTracing" type="xs:boolean" minOccurs="0" />
         <xs:element name="Rules">
           <xs:complexType>
             <xs:choice maxOccurs="unbounded">
