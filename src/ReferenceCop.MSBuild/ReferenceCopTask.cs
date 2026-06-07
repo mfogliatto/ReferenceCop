@@ -120,6 +120,10 @@
                 success = false;
                 this.BuildEngine.LogErrorEvent(ex);
             }
+            finally
+            {
+                (this.projectReferencesProvider as IDisposable)?.Dispose();
+            }
 
             return success;
         }
