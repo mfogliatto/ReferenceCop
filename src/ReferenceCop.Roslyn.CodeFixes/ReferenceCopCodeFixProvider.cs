@@ -18,7 +18,7 @@
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return Enumerable.Empty<string>().ToImmutableArray<string>(); }
+            get { return ImmutableArray<string>.Empty; }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()
