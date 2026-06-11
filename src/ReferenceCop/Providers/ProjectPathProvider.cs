@@ -5,7 +5,7 @@
 
     public class ProjectPathProvider : IProjectPathProvider
     {
-        private readonly string repositoryRoot;
+        private readonly Uri repositoryRootUri;
 
         public ProjectPathProvider(string repositoryRoot)
         {
@@ -14,7 +14,10 @@
                 throw new ArgumentNullException(nameof(repositoryRoot));
             }
 
-            this.repositoryRoot = repositoryRoot;
+            string normalizedRoot = Path.GetFullPath(repositoryRoot)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                + Path.DirectorySeparatorChar;
+            this.repositoryRootUri = new Uri(normalizedRoot);
         }
 
         /// <summary>
@@ -28,14 +31,11 @@
                 throw new ArgumentNullException(nameof(projectFilePath));
             }
 
-            string relativeTo = this.repositoryRoot;
-            relativeTo = Path.GetFullPath(relativeTo).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
             projectFilePath = Path.GetFullPath(projectFilePath);
 
-            Uri relativeToUri = new Uri(relativeTo);
             Uri projectFilePathUri = new Uri(projectFilePath);
 
-            Uri relativeUri = relativeToUri.MakeRelativeUri(projectFilePathUri);
+            Uri relativeUri = this.repositoryRootUri.MakeRelativeUri(projectFilePathUri);
             string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
             relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
