@@ -7,14 +7,14 @@
 
     public class AssemblyNameViolationDetector : IViolationDetector<AssemblyIdentity>
     {
-        private readonly Dictionary<string, ReferenceCopConfig.Rule> rules;
+        private readonly List<KeyValuePair<string, ReferenceCopConfig.Rule>> rules;
         private readonly Dictionary<string, ReferenceCopConfig.Rule> exactMatchRules;
         private readonly List<KeyValuePair<string, ReferenceCopConfig.Rule>> patternRules;
         private readonly IEqualityComparer<string> referenceNameComparer;
 
         public AssemblyNameViolationDetector(IEqualityComparer<string> referenceNameComparer, ReferenceCopConfig config)
         {
-            this.rules = new Dictionary<string, ReferenceCopConfig.Rule>(referenceNameComparer);
+            this.rules = new List<KeyValuePair<string, ReferenceCopConfig.Rule>>();
             this.referenceNameComparer = referenceNameComparer;
 
             // Separate exact matches from patterns for performance optimization.
@@ -103,15 +103,13 @@
             var assemblyNameRules = config.Rules.OfType<ReferenceCopConfig.AssemblyName>();
             foreach (var rule in assemblyNameRules)
             {
-                // Load into original dictionary for backward compatibility
-                try
-                {
-                    this.rules.Add(rule.Pattern, rule);
-                }
-                catch (ArgumentException)
+                // Check for duplicate patterns using the comparer's Equals method
+                if (this.rules.Any(r => this.referenceNameComparer.Equals(r.Key, rule.Pattern)))
                 {
                     throw new InvalidOperationException($"Duplicate rule pattern '{rule.Pattern}' found in the configuration file.");
                 }
+
+                this.rules.Add(new KeyValuePair<string, ReferenceCopConfig.Rule>(rule.Pattern, rule));
 
                 // Also load into optimized structures - separate exact matches from patterns
                 if (IsExactMatch(rule.Pattern))
