@@ -9,7 +9,7 @@ namespace ReferenceCop
     /// </summary>
     public class NoWarnAssembliesProvider : INoWarnAssembliesProvider
     {
-        private static readonly Dictionary<string, IEnumerable<string>> EmptyDictionary = new Dictionary<string, IEnumerable<string>>();
+        private static readonly Dictionary<string, HashSet<string>> EmptyDictionary = new Dictionary<string, HashSet<string>>();
 
         private static readonly char[] AssemblyEntriesSeparator = new[] { ';' };
         private static readonly char[] EntryPartsSeparator = new[] { '|' };
@@ -27,7 +27,7 @@ namespace ReferenceCop
         /// - NoWarn codes are comma-separated.
         /// </param>
         /// <returns>A dictionary where the key is the assembly name and the value is a collection of NoWarn codes.</returns>
-        public Dictionary<string, IEnumerable<string>> GetNoWarnByAssembly(string noWarnAssembliesString)
+        public Dictionary<string, HashSet<string>> GetNoWarnByAssembly(string noWarnAssembliesString)
         {
             if (string.IsNullOrEmpty(noWarnAssembliesString))
             {
@@ -41,7 +41,7 @@ namespace ReferenceCop
                 return EmptyDictionary;
             }
 
-            var result = new Dictionary<string, IEnumerable<string>>(entries.Length);
+            var result = new Dictionary<string, HashSet<string>>(entries.Length);
             foreach (var entry in entries)
             {
                 var parts = entry.Split(EntryPartsSeparator, 2);
@@ -52,13 +52,13 @@ namespace ReferenceCop
 
                     if (string.IsNullOrEmpty(noWarnCodesString))
                     {
-                        result[assemblyName] = Array.Empty<string>();
+                        result[assemblyName] = new HashSet<string>();
                     }
                     else
                     {
-                        var noWarnCodes = noWarnCodesString.Split(NoWarnCodesSeparator, StringSplitOptions.RemoveEmptyEntries)
-                                                    .Select(code => code.Trim())
-                                                    .ToArray();
+                        var noWarnCodes = new HashSet<string>(
+                            noWarnCodesString.Split(NoWarnCodesSeparator, StringSplitOptions.RemoveEmptyEntries)
+                                             .Select(code => code.Trim()));
 
                         result[assemblyName] = noWarnCodes;
                     }

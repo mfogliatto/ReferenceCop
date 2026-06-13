@@ -35,7 +35,7 @@ namespace ReferenceCop.MSBuild
                     ? new List<string>()
                     : noWarnValue.Split(',').Select(code => code.Trim());
 
-                yield return new ProjectReferenceInfo(referencePath, noWarnCodes);
+                yield return new ProjectReferenceInfo(referencePath, new HashSet<string>(noWarnCodes));
             }
         }
 
