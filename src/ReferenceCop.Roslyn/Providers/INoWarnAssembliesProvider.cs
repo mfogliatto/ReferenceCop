@@ -18,7 +18,7 @@ namespace ReferenceCop
         /// - Each assembly entry consists of an assembly name and NoWarn codes separated by a pipe character (|)
         /// - NoWarn codes are comma-separated
         /// </param>
-        /// <returns>A dictionary where the key is the assembly name and the value is a collection of NoWarn codes.</returns>
-        Dictionary<string, IEnumerable<string>> GetNoWarnByAssembly(string noWarnAssembliesString);
+        /// <returns>A dictionary where the key is the assembly name and the value is a set of NoWarn codes for O(1) lookups.</returns>
+        Dictionary<string, HashSet<string>> GetNoWarnByAssembly(string noWarnAssembliesString);
     }
 }

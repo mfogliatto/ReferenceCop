@@ -12,10 +12,10 @@ namespace ReferenceCop.MSBuild
         /// </summary>
         /// <param name="path">The path to the referenced project.</param>
         /// <param name="noWarn">The NoWarn values for this reference.</param>
-        public ProjectReferenceInfo(string path, IEnumerable<string> noWarn = null)
+        public ProjectReferenceInfo(string path, HashSet<string> noWarn = null)
         {
             this.Path = path;
-            this.NoWarn = noWarn ?? new List<string>();
+            this.NoWarn = noWarn ?? new HashSet<string>();
         }
 
         /// <summary>
@@ -26,6 +26,6 @@ namespace ReferenceCop.MSBuild
         /// <summary>
         /// Gets the NoWarn values for this reference.
         /// </summary>
-        public IEnumerable<string> NoWarn { get; }
+        public HashSet<string> NoWarn { get; }
     }
 }
